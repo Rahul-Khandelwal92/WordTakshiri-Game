@@ -1,5 +1,5 @@
 {
-  "name": "Antakshari 2.0",
-  "description": "An interactive Antakshari-style game where you sing Bollywood songs based on random or selected words. Now with lyrics hints and a 30-second challenge!",
+  "name": "Word-takshari",
+  "description": "An interactive Antakshari-style game where you sing Bollywood songs based on random or selected words. Now with lyrics hints and a 15-second challenge!",
   "requestFramePermissions": []
 }

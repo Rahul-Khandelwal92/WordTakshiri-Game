@@ -1,17 +1,12 @@
 
-export enum Difficulty {
-  Easy = 'Easy',
-  Medium = 'Medium',
-  Hard = 'Hard'
-}
-
 export enum Category {
   Love = 'Love',
   Emotion = 'Emotion',
   Nature = 'Nature',
   Life = 'Life',
   Party = 'Party',
-  Classic = 'Classic'
+  Classic = 'Classic',
+  Patriotic = 'Patriotic'
 }
 
 export interface SongHint {
@@ -22,14 +17,13 @@ export interface SongHint {
 export interface BollywoodWord {
   id: string;
   word: string;
+  emoji: string;
   englishMeaning: string;
   songs: SongHint[];
-  difficulty: Difficulty;
   category: Category;
 }
 
 export type FilterState = {
-  difficulty: Difficulty | 'All';
-  category: Category | 'All';
+  category: Category | 'All' | 'All Others';
   search: string;
 };
