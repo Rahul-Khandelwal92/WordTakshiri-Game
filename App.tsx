@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Youtube, ExternalLink } from 'lucide-react';
+import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye } from 'lucide-react';
 import { BOLLYWOOD_WORDS } from './constants';
 import { BollywoodWord, Difficulty, Category, FilterState } from './types';
 import { WordCard } from './components/WordCard';
@@ -26,14 +26,12 @@ const playTone = (freq: number, type: OscillatorType, duration: number, volume: 
 };
 
 const playStartTune = () => {
-  // Melodic start tune: C-E-G
   playTone(261.63, 'sine', 0.5); // C4
   setTimeout(() => playTone(329.63, 'sine', 0.5), 200); // E4
   setTimeout(() => playTone(392.00, 'sine', 0.8), 400); // G4
 };
 
 const playRandomTune = () => {
-  // Energetic game-show style tune: G-B-D-G high
   playTone(392.00, 'square', 0.15, 0.05); // G4
   setTimeout(() => playTone(493.88, 'square', 0.15, 0.05), 100); // B4
   setTimeout(() => playTone(587.33, 'square', 0.15, 0.05), 200); // D5
@@ -41,26 +39,21 @@ const playRandomTune = () => {
 };
 
 const playEndTune = () => {
-  // Alert end tune: G-E-C (downward)
   playTone(392.00, 'triangle', 0.5); // G4
   setTimeout(() => playTone(329.63, 'triangle', 0.5), 200); // E4
   setTimeout(() => playTone(261.63, 'triangle', 1.0), 400); // C4
 };
 
 const playTickTune = (timeLeft: number) => {
-  // A subtle "tock" sound that gets slightly higher in the final 3 seconds
   const freq = timeLeft <= 3 ? 880 : 440;
   playTone(freq, 'sine', 0.1, 0.05);
 };
 
 const triggerConfetti = () => {
-  const root = document.getElementById('root');
-  if (root) {
-    const flash = document.createElement('div');
-    flash.className = 'fixed inset-0 z-[100] pointer-events-none bg-amber-500/20 animate-pulse';
-    document.body.appendChild(flash);
-    setTimeout(() => flash.remove(), 1000);
-  }
+  const flash = document.createElement('div');
+  flash.className = 'fixed inset-0 z-[100] pointer-events-none bg-amber-500/20 animate-pulse';
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 1000);
 };
 
 const App: React.FC = () => {
@@ -71,8 +64,8 @@ const App: React.FC = () => {
   });
 
   const [selectedWord, setSelectedWord] = useState<BollywoodWord | null>(null);
-  const [randomMode, setRandomMode] = useState(false);
-  const [hideSongs, setHideSongs] = useState(false);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [isShowingAnswers, setIsShowingAnswers] = useState(false);
   const [showRules, setShowRules] = useState(false);
 
   // Filter logic
@@ -90,24 +83,41 @@ const App: React.FC = () => {
     const randomIndex = Math.floor(Math.random() * BOLLYWOOD_WORDS.length);
     const word = BOLLYWOOD_WORDS[randomIndex];
     setSelectedWord(word);
-    setRandomMode(true);
-    setHideSongs(true);
-    playRandomTune(); // Distinct sound for Random mode
+    setIsTimerActive(false);
+    setIsShowingAnswers(false);
+    playRandomTune();
+  };
+
+  const handleWordClick = (word: BollywoodWord) => {
+    setSelectedWord(word);
+    setIsTimerActive(false);
+    setIsShowingAnswers(false);
+    playStartTune();
+  };
+
+  const startTimer = () => {
+    setIsTimerActive(true);
+    setIsShowingAnswers(false);
+  };
+
+  const showAnswers = () => {
+    setIsShowingAnswers(true);
+    setIsTimerActive(false);
   };
 
   const resetGame = () => {
     setSelectedWord(null);
-    setRandomMode(false);
-    setHideSongs(false);
+    setIsTimerActive(false);
+    setIsShowingAnswers(false);
   };
 
   const handleTimerComplete = useCallback(() => {
-    setHideSongs(false);
+    setIsTimerActive(false);
+    setIsShowingAnswers(true);
     playEndTune();
   }, []);
 
   const handleTick = useCallback((timeLeft: number) => {
-    // Play the tick tune for the entire duration
     if (timeLeft >= 0) {
       playTickTune(timeLeft);
     }
@@ -147,7 +157,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      {!randomMode && !selectedWord && (
+      {!selectedWord && (
         <div className="space-y-4 mb-8 bg-slate-800/30 p-4 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
@@ -185,7 +195,7 @@ const App: React.FC = () => {
       {!selectedWord && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {filteredWords.map((item) => (
-            <WordCard key={item.id} item={item} onClick={(it) => { setSelectedWord(it); playStartTune(); }} />
+            <WordCard key={item.id} item={item} onClick={handleWordClick} />
           ))}
         </div>
       )}
@@ -221,20 +231,53 @@ const App: React.FC = () => {
             </div>
 
             <div className="p-6 flex-1 overflow-y-auto">
-              {randomMode && hideSongs ? (
-                <div className="flex flex-col items-center justify-center space-y-6 py-4">
+              {/* Intermediate Step: Options */}
+              {!isTimerActive && !isShowingAnswers && (
+                <div className="flex flex-col gap-4 py-8 animate-in zoom-in-95 duration-300">
+                  <button 
+                    onClick={startTimer}
+                    className="flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black py-8 px-6 rounded-3xl shadow-xl shadow-amber-500/20 transition-all active:scale-95"
+                  >
+                    <TimerIcon size={32} />
+                    <span className="text-xl">START TIMER</span>
+                    <span className="text-xs font-normal opacity-80 uppercase tracking-widest">15 Seconds Challenge</span>
+                  </button>
+                  
+                  <div className="flex items-center gap-4 text-slate-700 my-2">
+                    <div className="h-[1px] flex-1 bg-slate-800"></div>
+                    <span className="text-xs font-bold">OR</span>
+                    <div className="h-[1px] flex-1 bg-slate-800"></div>
+                  </div>
+
+                  <button 
+                    onClick={showAnswers}
+                    className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-black py-8 px-6 rounded-3xl shadow-lg transition-all active:scale-95"
+                  >
+                    <Eye size={32} />
+                    <span className="text-xl">SHOW ANSWERS</span>
+                    <span className="text-xs font-normal opacity-80 uppercase tracking-widest">Reveal Song Hints</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Timer Active View */}
+              {isTimerActive && !isShowingAnswers && (
+                <div className="flex flex-col items-center justify-center space-y-6 py-4 animate-in fade-in duration-500">
                   <Timer 
                     duration={15} 
                     onComplete={handleTimerComplete} 
                     onTick={handleTick}
-                    isActive={hideSongs} 
+                    isActive={true} 
                   />
                   <div className="text-center space-y-2">
                     <p className="text-slate-300 text-lg">Quick! Sing a song with <br/><span className="text-amber-400 font-bold">"{selectedWord.word}"</span>!</p>
-                    <p className="text-xs text-slate-500 italic">Starting hints in 15 seconds...</p>
+                    <p className="text-xs text-slate-500 italic">Hints will automatically reveal in a moment...</p>
                   </div>
                 </div>
-              ) : (
+              )}
+
+              {/* Answers Revealed View */}
+              {isShowingAnswers && (
                 <div className="space-y-6 animate-in zoom-in-95 duration-500">
                   <div className="flex items-center justify-between text-slate-400 mb-2">
                     <div className="flex items-center gap-2">
@@ -298,19 +341,19 @@ const App: React.FC = () => {
             <div className="space-y-6 text-slate-300">
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">1</div>
-                <p>Pick a word. <span className="text-amber-400 font-bold">Start tune</span> will play.</p>
+                <p>Pick a word to enter the <span className="text-amber-400 font-bold">Challenge Zone</span>.</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">2</div>
-                <p>You have <span className="text-amber-400 font-bold">15 seconds</span> to sing a line correctly.</p>
+                <p>Choose to <span className="text-amber-400 font-bold">Start Timer</span> (15s) or <span className="text-amber-400 font-bold">Show Answers</span> immediately.</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">3</div>
-                <p>A <span className="text-amber-400 font-bold">Tick sound</span> plays from the start to keep you alert!</p>
+                <p>If the timer runs out, the songs are revealed. Sing it to win!</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">4</div>
-                <p>Stuck? Look at the <span className="text-amber-400 font-bold">one-liner lyrics hints</span> for help!</p>
+                <p>A <span className="text-amber-400 font-bold">Tick sound</span> plays during the timer to keep the pressure on!</p>
               </div>
             </div>
             <button onClick={() => setShowRules(false)} className="w-full mt-8 bg-amber-500 text-slate-900 font-black py-4 rounded-xl shadow-lg">LET'S START</button>
