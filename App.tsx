@@ -112,7 +112,7 @@ const App: React.FC = () => {
     // Light focus lofi track
     const audio = new Audio('https://cdn.pixabay.com/audio/2022/05/27/audio_1808d304ad.mp3');
     audio.loop = true;
-    audio.volume = 0.08; // Very light focus music
+    audio.volume = 0.08; 
     bgMusicRef.current = audio;
 
     const initAudio = () => {
@@ -311,35 +311,32 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-24 px-4 pt-6 md:pt-10 max-w-5xl mx-auto selection:bg-amber-500/30">
-      {/* PERSISTENT STREAK COUNTER - ALWAYS VISIBLE WITH HIGHEST Z-INDEX */}
+    <div className="min-h-screen pb-24 px-4 pt-4 md:pt-10 max-w-5xl mx-auto selection:bg-amber-500/30">
+      {/* PERSISTENT STREAK COUNTER - ELEVATED Z-INDEX & FIXED AT THE TOP RIGHT */}
       <div className="fixed top-4 right-4 md:top-6 md:right-8 z-[500] pointer-events-none">
         <div 
           key={streak} 
-          className={`flex items-center gap-2 md:gap-3 bg-slate-900/95 backdrop-blur-3xl border-2 px-3 py-1.5 md:px-6 md:py-2.5 rounded-2xl shadow-[0_0_30px_rgba(245,158,11,0.2)] transition-all duration-500 ${
+          className={`flex items-center gap-2 md:gap-3 bg-slate-900/90 backdrop-blur-2xl border-2 px-3 py-1.5 md:px-5 md:py-2 rounded-2xl shadow-[0_0_30px_rgba(245,158,11,0.2)] transition-all duration-500 ${
             streak > 0 
-              ? 'border-amber-400 scale-100 md:scale-110 animate-in zoom-in-95 bounce-in shadow-[0_0_50px_rgba(245,158,11,0.5)]' 
-              : 'border-white/10 opacity-60 scale-90 md:scale-100'
+              ? 'border-amber-400 scale-100 md:scale-110 shadow-[0_0_50px_rgba(245,158,11,0.4)] animate-in zoom-in-95 bounce-in' 
+              : 'border-white/10 opacity-70 scale-90'
           }`}
         >
           <div className="relative">
             <Flame 
-              size={20}
-              className={`${streak > 0 ? 'text-orange-500 animate-pulse' : 'text-slate-500'} md:w-7 md:h-7`} 
+              size={18}
+              className={`${streak > 0 ? 'text-orange-500 animate-pulse' : 'text-slate-500'} md:w-6 md:h-6`} 
               fill={streak > 0 ? "currentColor" : "none"} 
             />
             {streak > 0 && (
-              <>
-                <div className="absolute inset-0 bg-orange-600 blur-xl opacity-60 animate-ping" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 md:w-2.5 md:h-2.5 bg-amber-300 rounded-full animate-bounce shadow-[0_0_10px_#fcd34d]" />
-              </>
+              <div className="absolute inset-0 bg-orange-600 blur-xl opacity-40 animate-ping" />
             )}
           </div>
           <div className="flex flex-col items-center leading-none">
-            <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.25em] mb-0.5 ${streak > 0 ? 'text-amber-300' : 'text-slate-500'}`}>
+            <span className={`text-[7px] md:text-[9px] font-black uppercase tracking-[0.15em] mb-0.5 ${streak > 0 ? 'text-amber-300' : 'text-slate-500'}`}>
               Streak
             </span>
-            <span className={`text-lg md:text-3xl font-black ${streak > 0 ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'text-slate-500'}`}>
+            <span className={`text-base md:text-2xl font-black ${streak > 0 ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'text-slate-500'}`}>
               {streak}
             </span>
           </div>
@@ -350,26 +347,26 @@ const App: React.FC = () => {
       <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[110]">
         <button 
           onClick={() => setIsMuted(!isMuted)}
-          className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl border group ${
+          className={`w-11 h-11 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl border group ${
             isMuted 
               ? 'bg-slate-900/80 border-white/10 text-slate-500' 
-              : 'bg-amber-500 border-amber-400 text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.4)]'
+              : 'bg-amber-500 border-amber-400 text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.3)]'
           }`}
         >
           <div className={`absolute inset-0 rounded-full bg-amber-500/20 ${!isMuted ? 'animate-ping' : ''}`} />
-          {isMuted ? <VolumeX size={20} className="md:w-6 md:h-6" /> : <Volume2 size={20} className="md:w-6 md:h-6 group-hover:scale-110 transition-transform" />}
+          {isMuted ? <VolumeX size={18} /> : <Volume2 size={20} className="group-hover:scale-110 transition-transform" />}
         </button>
       </div>
 
-      {/* Header */}
-      <header className="mb-8 md:mb-12 text-center group mt-10 md:mt-4">
-        <div className="relative inline-flex flex-col items-center">
+      {/* Header - Balanced for Streak visibility */}
+      <header className="mb-10 md:mb-12 text-center group mt-16 md:mt-4 px-2">
+        <div className="relative inline-flex flex-col items-center max-w-full">
           <div className="flex justify-center items-center gap-2 md:gap-4 mb-2 relative">
-            <Mic2 className="text-amber-500/60 animate-pulse hidden xs:block" size={20} />
-            <h1 className="heading-font text-3xl sm:text-5xl md:text-7xl font-black tracking-tight gold-gradient-text drop-shadow-2xl gold-glow px-4">
+            <Mic2 className="text-amber-500/60 animate-pulse hidden xs:block" size={18} />
+            <h1 className="heading-font text-2xl sm:text-5xl md:text-7xl font-black tracking-tight gold-gradient-text drop-shadow-2xl gold-glow">
               WORD-TAKSHARI
             </h1>
-            <Music className="text-amber-500/60 animate-pulse hidden xs:block" style={{ animationDelay: '0.5s' }} size={20} />
+            <Music className="text-amber-500/60 animate-pulse hidden xs:block" style={{ animationDelay: '0.5s' }} size={18} />
           </div>
           <p className="text-amber-500/40 text-[7px] md:text-xs font-bold tracking-[0.2em] md:tracking-[0.5em] uppercase opacity-80">
             The Definitive Bollywood Singing Arena
@@ -388,8 +385,8 @@ const App: React.FC = () => {
           <div className="relative flex items-center justify-center gap-4 md:gap-5">
              <Shuffle size={24} className={`${isShuffling ? 'animate-spin' : 'group-hover:rotate-12 transition-transform'} text-amber-100 md:w-8 md:h-8`} />
              <div className="text-left">
-                <span className="block text-base md:text-2xl font-black heading-font tracking-wide text-white uppercase">CHOOSE A RANDOM WORD</span>
-                <span className="block text-[8px] md:text-[10px] uppercase font-bold text-amber-200/50 tracking-widest">Generate Melody</span>
+                <span className="block text-base md:text-2xl font-black heading-font tracking-wide text-white uppercase">RANDOM START</span>
+                <span className="block text-[8px] md:text-[10px] uppercase font-bold text-amber-200/50 tracking-widest">Shuffle Melodies</span>
              </div>
           </div>
         </button>
@@ -411,7 +408,7 @@ const App: React.FC = () => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500/30" size={16} />
               <input 
                 type="text" 
-                placeholder="Search lyrical themes..."
+                placeholder="Search lyrics..."
                 value={filters.search}
                 onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
                 className="w-full bg-slate-950/40 border border-white/5 text-slate-100 rounded-xl py-3 md:py-4 pl-10 pr-4 focus:outline-none focus:border-amber-500/40 transition-all placeholder:text-slate-600 text-sm md:text-base"
@@ -448,7 +445,7 @@ const App: React.FC = () => {
           <div className="relative">
             <div className="absolute -inset-16 md:-inset-24 bg-amber-500/10 blur-[80px] md:blur-[120px] rounded-full animate-pulse" />
             <div className="text-center relative">
-              <p className="text-amber-500 font-black tracking-[0.3em] md:tracking-[0.5em] text-[8px] md:text-[10px] uppercase mb-8 md:mb-12 opacity-60">Melodic Shuffling...</p>
+              <p className="text-amber-500 font-black tracking-[0.3em] md:tracking-[0.5em] text-[8px] md:text-[10px] uppercase mb-8 md:mb-12 opacity-60">Shuffling...</p>
               <div className="h-32 md:h-48 flex items-center justify-center">
                 <h2 className="hindi-font text-5xl md:text-8xl font-black text-white transition-all blur-[1px] scale-110 animate-in zoom-in-90 duration-75 px-4 text-center">
                   {shufflingWord}
@@ -460,18 +457,25 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Detail View Overlay */}
+      {/* Detail View Overlay - REDESIGNED FOR MOBILE CLARITY */}
       {selectedWord && !isShuffling && (
-        <div className="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl flex items-center justify-center p-3 md:p-6 animate-in fade-in duration-300 overflow-y-auto">
-          <div className="w-full max-w-xl bg-slate-900 border border-amber-500/20 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col my-auto max-h-[92vh] relative scale-95 sm:scale-100">
-            
-            {/* Shifting close button to top-left on mobile to prevent streak overlap */}
-            <button onClick={resetGame} className="absolute left-4 top-4 md:left-auto md:right-8 md:top-8 text-slate-500 hover:text-white p-3 transition-colors z-[160] bg-slate-950/40 rounded-full border border-white/5">
+        <div className="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl flex flex-col p-4 animate-in fade-in duration-300 overflow-hidden">
+          
+          {/* TOP BAR / SAFE ZONE FOR STREAK & CLOSE */}
+          <div className="flex items-center justify-between w-full h-16 px-2 mb-2 relative z-[160]">
+             {/* Position Close button opposite of Streak HUD */}
+            <button onClick={resetGame} className="text-slate-500 hover:text-white p-3 transition-colors bg-white/5 hover:bg-white/10 rounded-full border border-white/5">
               <X size={24} />
             </button>
+            
+            {/* Empty space here because Streak is Fixed viewport-wide above this z-index */}
+            <div className="w-20" /> 
+          </div>
 
-            <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth flex flex-col">
-              <div className={`p-6 md:p-10 text-center relative border-b border-white/5 transition-all ${isTimerActive || isGameOver || isShowingAnswers ? 'pt-16 pb-6' : 'py-12 md:py-16'}`}>
+          <div className="flex-1 flex flex-col items-center justify-center overflow-y-auto no-scrollbar pb-10">
+            <div className="w-full max-w-xl bg-slate-900 border border-amber-500/20 rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col relative animate-in zoom-in-95 duration-300">
+              
+              <div className={`p-6 md:p-10 text-center relative border-b border-white/5 transition-all ${isTimerActive || isGameOver || isShowingAnswers ? 'pt-10 pb-4' : 'py-10 md:py-16'}`}>
                 <div className={`flex flex-col items-center justify-center gap-4 md:gap-6`}>
                   <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 px-2">
                     <h2 className={`hindi-font font-black text-amber-400 gold-glow break-words transition-all ${isTimerActive || isGameOver || isShowingAnswers ? 'text-4xl md:text-6xl' : 'text-5xl md:text-8xl'}`}>
@@ -489,16 +493,16 @@ const App: React.FC = () => {
                           className="flex items-center gap-2 text-amber-200 hover:text-white font-bold text-[9px] md:text-[10px] tracking-widest uppercase bg-white/5 px-6 md:px-8 py-2 md:py-3 rounded-full border border-white/10 active:scale-95 transition-all disabled:opacity-50 mx-auto"
                         >
                           {isSpeaking ? <Loader2 className="animate-spin" size={12} /> : <Volume2 size={12} />}
-                          PHONETIC GUIDE
+                          SPEAK IT
                         </button>
                         <p className="text-slate-400 text-base md:text-xl font-medium tracking-tight italic px-4">
                           "{selectedWord.englishMeaning}"
                         </p>
                       </div>
 
-                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 md:p-6 shadow-xl max-w-xs mx-auto">
-                         <p className="text-amber-400 text-[9px] md:text-[11px] font-black uppercase tracking-widest mb-1">Challenge</p>
-                         <p className="text-white text-xs md:text-sm font-bold">Sing a song featuring <span className="text-amber-400">"{selectedWord.word}"</span></p>
+                      <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 md:p-6 shadow-xl max-w-xs mx-auto">
+                         <p className="text-amber-400 text-[9px] font-black uppercase tracking-widest mb-1">Target</p>
+                         <p className="text-white text-xs md:text-sm font-bold">Sing a song with <span className="text-amber-400">"{selectedWord.word}"</span></p>
                       </div>
                     </div>
                   )}
@@ -507,13 +511,13 @@ const App: React.FC = () => {
 
               <div className="p-6 md:p-10 flex-1">
                 {!isTimerActive && !isShowingAnswers && !isGameOver && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4 max-w-sm mx-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2 max-w-sm mx-auto">
                     <button 
                       onClick={startTimer}
                       className="flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 font-black py-6 md:py-8 rounded-2xl md:rounded-3xl shadow-2xl hover:brightness-110 active:scale-[0.98] transition-all"
                     >
                       <TimerIcon size={24} />
-                      <span className="text-sm heading-font tracking-widest">START TIMER</span>
+                      <span className="text-sm heading-font tracking-widest">SING NOW</span>
                     </button>
 
                     <button 
@@ -521,13 +525,13 @@ const App: React.FC = () => {
                       className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-amber-500 font-bold py-6 md:py-8 rounded-2xl md:rounded-3xl border border-white/5 transition-all active:scale-[0.98]"
                     >
                       <Eye size={24} />
-                      <span className="text-sm heading-font tracking-widest">GIVE UP</span>
+                      <span className="text-sm heading-font tracking-widest uppercase">Reveal Hints</span>
                     </button>
                   </div>
                 )}
 
                 {isTimerActive && !isShowingAnswers && !isGameOver && (
-                  <div className="flex flex-col items-center justify-center space-y-8 md:space-y-12">
+                  <div className="flex flex-col items-center justify-center space-y-6 md:space-y-12">
                     <div className="scale-90 md:scale-110">
                       <Timer 
                         duration={15} 
@@ -537,14 +541,14 @@ const App: React.FC = () => {
                       />
                     </div>
                     
-                    <div className="w-full space-y-6 md:space-y-10 max-w-sm mx-auto">
+                    <div className="w-full space-y-6 max-w-sm mx-auto">
                       <div className="flex gap-4 h-20 md:h-24 px-2">
                         <button 
                           onClick={handleVictory}
                           className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl shadow-xl flex flex-col items-center justify-center gap-1 transition-all active:translate-y-1"
                         >
                           <CheckCircle size={22} />
-                          <span className="text-[10px] md:text-xs uppercase tracking-wide">VICTORY</span>
+                          <span className="text-[10px] md:text-xs uppercase tracking-wide">NAILED IT</span>
                         </button>
 
                         <button 
@@ -552,7 +556,7 @@ const App: React.FC = () => {
                           className="flex-1 bg-slate-800 text-slate-400 font-bold rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-1 transition-all active:scale-95"
                         >
                           <HelpCircle size={22} className="text-amber-500" />
-                          <span className="text-[10px] md:text-xs uppercase tracking-wide">SURRENDER</span>
+                          <span className="text-[10px] md:text-xs uppercase tracking-wide">NO IDEA</span>
                         </button>
                       </div>
                     </div>
@@ -562,21 +566,21 @@ const App: React.FC = () => {
                 {isGameOver && (
                   <div className="flex flex-col items-center justify-center py-4 md:py-8 animate-in zoom-in-95">
                     <div className="relative mb-6">
-                      <div className="absolute -inset-10 bg-amber-500/20 blur-3xl rounded-full" />
+                      <div className="absolute -inset-10 bg-amber-500/10 blur-3xl rounded-full" />
                       <div className="relative bg-gradient-to-br from-amber-400 to-amber-700 p-8 rounded-full border-4 border-amber-300 shadow-2xl">
                         <Trophy size={48} className="text-slate-950" />
                       </div>
                     </div>
                     
-                    <h3 className="heading-font text-2xl md:text-4xl font-black text-white mb-2 uppercase tracking-tighter">STREAK ENDED</h3>
+                    <h3 className="heading-font text-2xl md:text-4xl font-black text-white mb-2 uppercase tracking-tighter">FINALE</h3>
                     <div className="flex items-center gap-3 mb-8">
-                      <span className="text-slate-500 font-black text-xl tracking-widest">SCORE:</span>
+                      <span className="text-slate-500 font-black text-xl tracking-widest uppercase">STREAK:</span>
                       <span className="text-amber-400 font-black text-5xl gold-glow">{finalStreak}</span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-sm mx-auto">
                       <button onClick={handleRestart} className="bg-white/10 hover:bg-white/20 text-white font-black py-4 rounded-xl border border-white/5 transition-all active:scale-95 text-xs tracking-widest uppercase">
-                        RESTART
+                        REPLAY
                       </button>
                       <button onClick={() => { setIsGameOver(false); setIsShowingAnswers(true); }} className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 rounded-xl shadow-xl transition-all active:scale-95 text-xs tracking-widest uppercase">
                         LYRICS
@@ -588,8 +592,8 @@ const App: React.FC = () => {
                 {isShowingAnswers && !isGameOver && (
                   <div className="space-y-6 animate-in slide-in-from-bottom-6 max-w-sm mx-auto">
                     <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 text-center">
-                      <p className="text-rose-400 font-black uppercase text-[10px] tracking-widest mb-1">Final Score</p>
-                      <p className="text-white font-bold text-lg">{finalStreak}</p>
+                      <p className="text-rose-400 font-black uppercase text-[10px] tracking-widest mb-1">Result</p>
+                      <p className="text-white font-bold text-lg">Score: {finalStreak}</p>
                     </div>
 
                     <div className="space-y-3">
@@ -610,17 +614,17 @@ const App: React.FC = () => {
                       ))}
                     </div>
                     <button onClick={handleRestart} className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-black py-4 rounded-xl flex items-center justify-center gap-3 text-[10px] tracking-widest uppercase transition-all">
-                      <Home size={16} /> MAIN STAGE
+                      <Home size={16} /> MAIN SCREEN
                     </button>
                   </div>
                 )}
               </div>
-            </div>
 
-            <div className="p-4 bg-black/40 text-center border-t border-white/5 mt-auto">
-               <button onClick={handlePickRandom} className="text-slate-600 hover:text-amber-500 flex items-center justify-center gap-2 mx-auto text-[9px] font-black tracking-widest transition-colors uppercase">
-                 <RefreshCw size={12} /> SHUFFLE NEXT
-               </button>
+              <div className="p-4 bg-black/40 text-center border-t border-white/5 mt-auto">
+                 <button onClick={handlePickRandom} className="text-slate-600 hover:text-amber-500 flex items-center justify-center gap-2 mx-auto text-[9px] font-black tracking-widest transition-colors uppercase">
+                   <RefreshCw size={12} /> NEW WORD
+                 </button>
+              </div>
             </div>
           </div>
         </div>
@@ -628,17 +632,16 @@ const App: React.FC = () => {
 
       {showRules && (
         <div className="fixed inset-0 z-[600] bg-black/98 flex items-center justify-center p-4 backdrop-blur-md">
-          <div className="w-full max-w-md bg-slate-900 border border-amber-500/20 rounded-[2rem] p-8 relative shadow-2xl overflow-y-auto max-h-[90vh]">
+          <div className="w-full max-w-md bg-slate-900 border border-amber-500/20 rounded-[2.5rem] p-8 relative shadow-2xl overflow-y-auto max-h-[90vh]">
             <button onClick={() => setShowRules(false)} className="absolute right-6 top-6 text-slate-600 hover:text-white p-2 transition-colors"><X size={24} /></button>
             <h2 className="heading-font text-3xl font-black text-amber-500 mb-8 tracking-widest uppercase">RULES</h2>
             <div className="space-y-6 text-slate-400 font-medium leading-relaxed text-sm">
-              <p>I. Select a keyword to begin your performance.</p>
-              <p>II. A <span className="text-amber-200">15-second timer</span> marks your time to shine.</p>
-              <p>III. You must sing any Bollywood track containing the chosen word.</p>
-              <p>IV. <span className="text-amber-200">GIVING UP</span> ends your current streak and reveals the lyrical answers.</p>
-              <p>V. <span className="text-emerald-400 font-bold">STREAKS:</span> Each victory adds to your tally. One slip-up ends the run!</p>
+              <p>I. Select a Bollywood keyword to start.</p>
+              <p>II. You have <span className="text-amber-200">15 seconds</span> to sing a song with that word.</p>
+              <p>III. <span className="text-amber-200">GIVING UP</span> shows lyrics but resets your streak.</p>
+              <p>IV. <span className="text-emerald-400 font-bold">STREAKS:</span> Keep singing without help to build your score!</p>
             </div>
-            <button onClick={() => setShowRules(false)} className="w-full mt-10 bg-amber-500 text-slate-950 font-black py-4 rounded-xl shadow-xl hover:brightness-110 active:translate-y-1 transition-all uppercase tracking-widest text-sm">UNDERSTOOD</button>
+            <button onClick={() => setShowRules(false)} className="w-full mt-10 bg-amber-500 text-slate-950 font-black py-4 rounded-xl shadow-xl hover:brightness-110 active:translate-y-1 transition-all uppercase tracking-widest text-sm">LET'S GO</button>
           </div>
         </div>
       )}
