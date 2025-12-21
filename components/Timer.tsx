@@ -34,18 +34,15 @@ export const Timer: React.FC<TimerProps> = ({ duration, onComplete, onTick, isAc
   }, [duration]);
 
   // Calculate percentages for the sand levels
-  // 1.0 (full) to 0.0 (empty)
   const topRatio = timeLeft / duration;
-  // 0.0 (empty) to 1.0 (full)
   const bottomRatio = 1 - topRatio;
 
   return (
-    <div className="relative flex flex-col items-center justify-center scale-110">
+    <div className="relative flex flex-col items-center justify-center scale-90 -my-2">
       {/* Hourglass Container */}
-      <div className="relative w-32 h-40">
+      <div className="relative w-28 h-36">
         <svg viewBox="0 0 100 140" className="w-full h-full drop-shadow-xl">
           <defs>
-            {/* The Hourglass Shape Path */}
             <path id="hourglass-shape" d="
               M 20 10 
               H 80 
@@ -64,8 +61,6 @@ export const Timer: React.FC<TimerProps> = ({ duration, onComplete, onTick, isAc
               C 20 130, 20 120, 25 110
               Z
             " />
-
-            {/* Clipping Masks for Sand */}
             <clipPath id="top-bulb">
               <rect x="0" y={10 + (60 * (1 - topRatio))} width="100" height="60" />
             </clipPath>
@@ -74,7 +69,6 @@ export const Timer: React.FC<TimerProps> = ({ duration, onComplete, onTick, isAc
             </clipPath>
           </defs>
 
-          {/* Hourglass Glass Glow */}
           <path 
             d="M 20 10 H 80 C 80 10, 80 20, 75 30 L 55 65 C 52 70, 48 70, 45 65 L 25 30 C 20 20, 20 10, 20 10 Z" 
             fill="rgba(255,255,255,0.05)" 
@@ -88,7 +82,6 @@ export const Timer: React.FC<TimerProps> = ({ duration, onComplete, onTick, isAc
             strokeWidth="2"
           />
 
-          {/* Top Sand */}
           <path 
             d="M 20 10 H 80 L 50 70 Z" 
             fill="#fbbf24" 
@@ -96,7 +89,6 @@ export const Timer: React.FC<TimerProps> = ({ duration, onComplete, onTick, isAc
             className="transition-all duration-1000 ease-linear"
           />
 
-          {/* Bottom Sand */}
           <path 
             d="M 20 130 H 80 L 50 70 Z" 
             fill="#fbbf24" 
@@ -104,7 +96,6 @@ export const Timer: React.FC<TimerProps> = ({ duration, onComplete, onTick, isAc
             className="transition-all duration-1000 ease-linear"
           />
 
-          {/* Falling Sand Stream */}
           {timeLeft > 0 && isActive && (
             <line 
               x1="50" y1="65" x2="50" y2="125" 
@@ -115,15 +106,13 @@ export const Timer: React.FC<TimerProps> = ({ duration, onComplete, onTick, isAc
             />
           )}
 
-          {/* Frame / Stoppers */}
           <rect x="15" y="5" width="70" height="6" rx="3" fill="#334155" />
           <rect x="15" y="129" width="70" height="6" rx="3" fill="#334155" />
         </svg>
 
-        {/* Time Text Inside Hourglass Center */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <span className={`text-4xl font-black transition-all ${
-            timeLeft <= 5 ? 'text-rose-500 scale-125 animate-pulse' : 'text-white'
+            timeLeft <= 5 ? 'text-rose-500 scale-110 animate-pulse' : 'text-white'
           }`} style={{ textShadow: '0 0 10px rgba(0,0,0,0.5)' }}>
             {timeLeft}
           </span>
@@ -140,10 +129,10 @@ export const Timer: React.FC<TimerProps> = ({ duration, onComplete, onTick, isAc
         }
       `}} />
 
-      <p className={`mt-6 text-sm font-black tracking-widest uppercase transition-colors ${
+      <p className={`mt-2 text-[10px] font-black tracking-widest uppercase transition-colors ${
         timeLeft <= 5 ? 'text-rose-500 animate-bounce' : 'text-amber-500'
       }`}>
-        {timeLeft <= 5 ? 'Time is slipping!' : 'Sing your heart out!'}
+        {timeLeft <= 5 ? 'SING NOW!' : 'CLOCK IS TICKING'}
       </p>
     </div>
   );

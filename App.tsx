@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, Volume2, Loader2 } from 'lucide-react';
+import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, Volume2, Loader2, HelpCircle, Home } from 'lucide-react';
 import { GoogleGenAI, Modality } from "@google/genai";
 import { BOLLYWOOD_WORDS } from './constants';
 import { BollywoodWord, Category, FilterState } from './types';
@@ -243,29 +243,24 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 px-4 pt-6 max-w-4xl mx-auto">
-      {/* Header - Enhanced Visual Design */}
+      {/* Header */}
       <header className="mb-6 text-center group">
         <div className="relative inline-flex flex-col items-center">
-          {/* Subtle Background Glow */}
           <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-rose-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          
           <div className="flex justify-center items-center gap-3 mb-2 relative">
             <div className="relative">
               <Music className="text-amber-500 animate-pulse" size={20} />
               <div className="absolute -inset-1 bg-amber-400/30 blur-sm rounded-full animate-ping" />
             </div>
-            
             <h1 className="heading-font text-4xl md:text-6xl font-black tracking-[0.1em] leading-tight select-none">
               <span className="bg-clip-text text-transparent bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">WORD-</span>
               <span className="bg-clip-text text-transparent bg-gradient-to-b from-orange-400 via-rose-500 to-rose-700 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">TAKSHARI</span>
             </h1>
-
             <div className="relative">
               <Music className="text-rose-500 animate-pulse" size={20} />
               <div className="absolute -inset-1 bg-rose-400/30 blur-sm rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
             </div>
           </div>
-          
           <div className="flex items-center gap-2 relative">
             <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-slate-600" />
             <p className="text-slate-400 text-[9px] md:text-[11px] font-bold tracking-[0.3em] uppercase opacity-80 group-hover:opacity-100 group-hover:text-amber-400/80 transition-all">
@@ -276,7 +271,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Primary Action Button - Refined CTA size */}
+      {/* Primary Action Button */}
       <div className="space-y-4 mb-8">
         <button 
           onClick={handlePickRandom}
@@ -290,7 +285,6 @@ const App: React.FC = () => {
           <span className="text-[10px] sm:text-xs font-medium opacity-90 tracking-[0.25em] uppercase">Start your challenge</span>
           {isShuffling && <div className="absolute inset-0 bg-white/10 animate-pulse" />}
         </button>
-        
         <div className="flex justify-center">
            <button 
             onClick={() => setShowRules(true)}
@@ -302,7 +296,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Upfront Filters & Search */}
+      {/* Filters & Search */}
       {!selectedWord && !isShuffling && (
         <div className="space-y-6 mb-8 bg-slate-900/50 p-6 rounded-3xl border border-slate-800 backdrop-blur-sm">
           <div className="relative">
@@ -315,7 +309,6 @@ const App: React.FC = () => {
               className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all shadow-inner"
             />
           </div>
-          
           <div className="space-y-3">
             <span className="text-[10px] text-slate-500 uppercase font-black tracking-widest block px-1">Themes</span>
             <div className="flex flex-wrap gap-2">
@@ -370,7 +363,7 @@ const App: React.FC = () => {
               <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto text-slate-600">
                 <Search size={32} />
               </div>
-              <p className="text-slate-500 font-medium">No matches found for your selection.</p>
+              <p className="text-slate-500 font-medium">No matches found.</p>
               <button 
                 onClick={() => setFilters({ category: 'All', search: '' })}
                 className="text-amber-500 font-bold hover:underline"
@@ -382,7 +375,7 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Shuffle Animation Overlay */}
+      {/* Shuffle Animation */}
       {isShuffling && (
         <div className="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-center p-4">
           <div className="relative flex flex-col items-center">
@@ -408,46 +401,52 @@ const App: React.FC = () => {
 
       {/* Detail View Overlay */}
       {selectedWord && !isShuffling && (
-        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-300">
-          <div className="w-full max-w-lg bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-2 sm:p-4 animate-in fade-in zoom-in-95 duration-300">
+          <div className="w-full max-w-lg bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10 flex flex-col max-h-[95vh] sm:max-h-[90vh]">
             
-            <div className="p-6 text-center border-b border-slate-800 relative">
+            {/* Conditional Header: Smaller if timer is active */}
+            <div className={`${isTimerActive ? 'p-3' : 'p-6'} text-center border-b border-slate-800 relative transition-all`}>
               <button 
                 onClick={resetGame}
-                className="absolute right-4 top-4 text-slate-500 hover:text-white transition-colors p-2"
+                className="absolute right-4 top-2 text-slate-500 hover:text-white transition-colors p-2"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
               
-              <div className="mb-2 flex justify-center gap-2 items-center">
+              <div className={`mb-1 flex justify-center gap-2 items-center ${isTimerActive ? 'scale-75 origin-top' : ''}`}>
                 <span className="text-[10px] uppercase font-black bg-slate-800 text-slate-400 px-3 py-1 rounded-full border border-slate-700">
                   {selectedWord.category}
                 </span>
               </div>
 
-              <div className="flex flex-col items-center justify-center gap-4 mb-2">
+              <div className={`flex flex-col items-center justify-center gap-2 mb-1 ${isTimerActive ? 'scale-90' : ''}`}>
                 <div className="flex items-center gap-4">
-                  <h2 className="hindi-font text-6xl font-bold text-amber-400">
+                  <h2 className={`${isTimerActive ? 'text-4xl' : 'text-6xl'} hindi-font font-bold text-amber-400 transition-all`}>
                     {selectedWord.word}
                   </h2>
-                  <span className="text-5xl">{selectedWord.emoji}</span>
+                  <span className={isTimerActive ? 'text-3xl' : 'text-5xl'}>{selectedWord.emoji}</span>
                 </div>
                 
-                <button 
-                  onClick={speakWord}
-                  disabled={isSpeaking}
-                  className="flex items-center gap-2 text-amber-500 hover:text-amber-400 font-bold text-sm bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/20 active:scale-95 transition-all disabled:opacity-50"
-                >
-                  {isSpeaking ? <Loader2 className="animate-spin" size={16} /> : <Volume2 size={16} />}
-                  HEAR PRONUNCIATION
-                </button>
+                {/* Hide pronunciation and meaning during timer to save space */}
+                {!isTimerActive && (
+                  <>
+                    <button 
+                      onClick={speakWord}
+                      disabled={isSpeaking}
+                      className="flex items-center gap-2 text-amber-500 hover:text-amber-400 font-bold text-sm bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/20 active:scale-95 transition-all disabled:opacity-50"
+                    >
+                      {isSpeaking ? <Loader2 className="animate-spin" size={16} /> : <Volume2 size={16} />}
+                      HEAR PRONUNCIATION
+                    </button>
+                    <p className="text-slate-400 text-lg font-light italic mt-2">
+                      {selectedWord.englishMeaning}
+                    </p>
+                  </>
+                )}
               </div>
-              <p className="text-slate-400 text-xl font-light italic mt-2">
-                {selectedWord.englishMeaning}
-              </p>
             </div>
 
-            <div className="p-6 flex-1 overflow-y-auto">
+            <div className={`${isTimerActive ? 'p-3' : 'p-6'} flex-1 overflow-y-auto`}>
               {!isTimerActive && !isShowingAnswers && (
                 <div className="flex flex-col gap-4 py-8 animate-in zoom-in-95 duration-300">
                   <button 
@@ -458,13 +457,11 @@ const App: React.FC = () => {
                     <span className="text-xl">START TIMER</span>
                     <span className="text-[10px] font-normal opacity-80 uppercase tracking-widest">15 Seconds Challenge</span>
                   </button>
-                  
                   <div className="flex items-center gap-4 text-slate-700 my-2">
                     <div className="h-[1px] flex-1 bg-slate-800"></div>
                     <span className="text-xs font-bold">OR</span>
                     <div className="h-[1px] flex-1 bg-slate-800"></div>
                   </div>
-
                   <button 
                     onClick={showAnswers}
                     className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-black py-8 px-6 rounded-3xl shadow-lg transition-all active:scale-95"
@@ -477,7 +474,7 @@ const App: React.FC = () => {
               )}
 
               {isTimerActive && !isShowingAnswers && (
-                <div className="flex flex-col items-center justify-center space-y-8 py-4 animate-in fade-in duration-500">
+                <div className="flex flex-col items-center justify-center space-y-4 py-1 animate-in fade-in duration-500">
                   <Timer 
                     duration={15} 
                     onComplete={handleTimerComplete} 
@@ -485,52 +482,70 @@ const App: React.FC = () => {
                     isActive={true} 
                   />
                   
-                  <div className="w-full max-w-xs space-y-4">
-                    <div className="text-center space-y-2">
-                      <p className="text-slate-300 text-lg">Quick! Sing a song with <br/><span className="text-amber-400 font-bold">"{selectedWord.word}"</span>!</p>
+                  <div className="w-full max-w-md space-y-4">
+                    <div className="text-center">
+                      <p className="text-slate-300 text-sm leading-relaxed">Sing a song with <span className="text-amber-400 font-bold">"{selectedWord.word}"</span>!</p>
                     </div>
 
-                    <button 
-                      onClick={showAnswers}
-                      className="w-full relative flex items-center justify-center gap-4 bg-gradient-to-br from-emerald-400 via-emerald-600 to-teal-700 hover:from-emerald-300 hover:to-teal-600 text-white font-black py-4 px-6 rounded-[1.5rem] shadow-[0_12px_24px_rgba(16,185,129,0.25)] border-b-4 border-emerald-900 transition-all active:scale-95 active:border-b-0 group overflow-hidden"
-                    >
-                      <div className="bg-white/20 p-2 rounded-full group-hover:scale-110 transition-transform shadow-inner">
-                        <CheckCircle size={22} className="drop-shadow-sm" />
-                      </div>
-                      <div className="text-left flex flex-col">
-                        <span className="text-xl leading-tight uppercase tracking-tight drop-shadow-md">DONE!</span>
-                        <span className="text-[10px] font-bold opacity-90 uppercase tracking-[0.1em] -mt-0.5">Show more answers</span>
-                      </div>
-                    </button>
+                    <div className="flex flex-row gap-2 items-stretch pb-2">
+                      <button 
+                        onClick={() => {
+                          triggerConfetti();
+                          handlePickRandom();
+                        }}
+                        className="flex-1 relative flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-emerald-400 via-emerald-600 to-teal-700 hover:from-emerald-300 hover:to-teal-600 text-white font-black py-4 px-2 rounded-[1.25rem] shadow-lg border-b-4 border-emerald-900 transition-all active:scale-95 active:border-b-0 group overflow-hidden"
+                      >
+                        <div className="bg-white/20 p-1 rounded-full shadow-inner">
+                          <CheckCircle size={14} className="drop-shadow-sm" />
+                        </div>
+                        <div className="text-center flex flex-col">
+                          <span className="text-xs sm:text-sm uppercase tracking-tight drop-shadow-md">I DID IT!</span>
+                          <span className="text-[7px] font-bold opacity-80 uppercase tracking-tighter">NEXT WORD</span>
+                        </div>
+                      </button>
+
+                      <button 
+                        onClick={showAnswers}
+                        className="flex-1 flex flex-col items-center justify-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-4 px-2 rounded-[1.25rem] border border-slate-700 shadow-lg transition-all active:scale-95 group"
+                      >
+                        <div className="bg-slate-700 p-1 rounded-full">
+                          <HelpCircle size={14} className="text-amber-500" />
+                        </div>
+                        <div className="text-center flex flex-col">
+                          <span className="text-xs sm:text-sm uppercase tracking-tight">I DON'T KNOW</span>
+                          <span className="text-[7px] font-bold opacity-60 uppercase tracking-tighter">REVEAL HINTS</span>
+                        </div>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
 
               {isShowingAnswers && (
-                <div className="space-y-6 animate-in zoom-in-95 duration-500">
-                  <div className="flex items-center justify-between text-slate-400 mb-2">
+                <div className="space-y-4 animate-in zoom-in-95 duration-500">
+                  <div className="flex items-center justify-between text-slate-400 mb-1">
                     <div className="flex items-center gap-2">
-                      <Trophy size={18} className="text-yellow-500" />
-                      <h4 className="font-bold text-sm tracking-widest uppercase">Iconic Hints & Lyrics</h4>
+                      <Trophy size={16} className="text-yellow-500" />
+                      <h4 className="font-bold text-[10px] tracking-widest uppercase">Song Hints</h4>
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {selectedWord.songs.map((song, i) => (
                       <div 
                         key={i} 
-                        className="bg-slate-800/40 p-4 rounded-xl border border-slate-700/30 flex items-center justify-between group hover:bg-slate-800 transition-colors"
+                        className="bg-slate-800/40 p-3 rounded-xl border border-slate-700/30 flex items-center justify-between group hover:bg-slate-800 transition-colors"
                       >
-                        <div className="flex-1 pr-4">
-                          <p className="text-amber-100 font-bold text-base leading-tight mb-1">{song.title}</p>
-                          <p className="text-slate-400 text-[10px] italic">"{song.lyrics}"</p>
+                        <div className="flex-1 pr-3">
+                          <p className="text-amber-100 font-bold text-sm leading-tight mb-1">{song.title}</p>
+                          <p className="text-slate-400 text-[9px] italic">"{song.lyrics}"</p>
                         </div>
                         <a 
                           href={`https://www.youtube.com/results?search_query=${encodeURIComponent(song.title + " Bollywood Song")}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 text-amber-500 transition-all active:scale-90 flex-shrink-0"
+                          className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 text-amber-500 transition-all active:scale-90 flex-shrink-0"
                         >
-                          <Play size={16} fill="currentColor" />
+                          <Play size={14} fill="currentColor" />
                         </a>
                       </div>
                     ))}
@@ -538,22 +553,23 @@ const App: React.FC = () => {
                   <button 
                     onClick={() => {
                       triggerConfetti();
-                      handlePickRandom();
+                      resetGame();
                     }}
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 mt-4"
+                    className="w-full bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-bold py-3 rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 mt-2 uppercase text-xs"
                   >
-                    I SANG IT! NEXT WORD
+                    <Home size={14} />
+                    Back to Home
                   </button>
                 </div>
               )}
             </div>
 
-            <div className="p-4 bg-slate-950/50 text-center border-t border-slate-800">
+            <div className="p-3 bg-slate-950/50 text-center border-t border-slate-800">
               <button 
                 onClick={handlePickRandom}
-                className="text-slate-500 hover:text-amber-400 flex items-center justify-center gap-2 mx-auto text-xs font-medium transition-colors"
+                className="text-slate-500 hover:text-amber-400 flex items-center justify-center gap-2 mx-auto text-[10px] font-medium transition-colors"
               >
-                <RefreshCw size={14} />
+                <RefreshCw size={12} />
                 ANOTHER RANDOM WORD
               </button>
             </div>
@@ -567,25 +583,25 @@ const App: React.FC = () => {
           <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-8 relative">
             <button onClick={() => setShowRules(false)} className="absolute right-6 top-6 text-slate-500 hover:text-white"><X size={20} /></button>
             <h2 className="heading-font text-3xl font-bold text-amber-500 mb-6 flex items-center gap-2"><Info /> HOW TO PLAY</h2>
-            <div className="space-y-6 text-slate-300">
+            <div className="space-y-6 text-slate-300 text-sm">
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">1</div>
                 <p>Pick a word to enter the <span className="text-amber-400 font-bold">Challenge Zone</span>.</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">2</div>
-                <p>Use <span className="text-amber-400 font-bold">Hear Pronunciation</span> to learn the word.</p>
+                <p>Learn its meaning or hear how it's said.</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">3</div>
-                <p>Choose to <span className="text-amber-400 font-bold">Start Timer</span> (15s) or <span className="text-amber-400 font-bold">Show Answers</span> immediately.</p>
+                <p>Sing a song within <span className="text-amber-400 font-bold">15 seconds</span>.</p>
               </div>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">4</div>
-                <p>If the timer runs out, songs are revealed. Sing to win!</p>
+                <p>If you fail, song hints are revealed. Play together for fun!</p>
               </div>
             </div>
-            <button onClick={() => setShowRules(false)} className="w-full mt-8 bg-amber-500 text-slate-900 font-black py-4 rounded-xl shadow-lg">LET'S START</button>
+            <button onClick={() => setShowRules(false)} className="w-full mt-8 bg-amber-500 text-slate-900 font-black py-4 rounded-xl shadow-lg">START SINGING</button>
           </div>
         </div>
       )}
