@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Star, Play } from 'lucide-react';
 import { BollywoodWord } from '../types';
@@ -12,7 +11,7 @@ export const WordCard: React.FC<WordCardProps> = ({ item, onClick }) => {
   return (
     <button
       onClick={() => onClick(item)}
-      className="group relative bg-white/[0.03] hover:bg-amber-500/5 border border-white/5 hover:border-amber-500/40 rounded-3xl p-6 transition-all duration-500 transform hover:-translate-y-3 hover:shadow-[0_25px_50px_rgba(212,175,55,0.1)] active:scale-95 text-left w-full h-full flex flex-col overflow-hidden"
+      className="group relative bg-white/[0.03] hover:bg-gradient-to-br hover:from-amber-500/[0.08] hover:to-transparent border border-white/5 hover:border-amber-500/40 rounded-3xl p-6 transition-all duration-500 transform hover:-translate-y-3 hover:shadow-[0_25px_50px_rgba(212,175,55,0.1)] active:scale-95 text-left w-full h-full flex flex-col overflow-hidden"
     >
       <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
         <Star className="text-amber-500" size={12} fill="currentColor" />
@@ -22,10 +21,10 @@ export const WordCard: React.FC<WordCardProps> = ({ item, onClick }) => {
         <span className="text-[8px] text-amber-500/60 font-black uppercase tracking-[0.2em] bg-amber-500/5 px-2 py-1 rounded-md border border-amber-500/10">
           {item.category}
         </span>
-        <span className="text-3xl group-hover:scale-125 transition-transform duration-700">{item.emoji}</span>
+        <span className="text-3xl group-hover:scale-125 transition-transform duration-700 ease-out">{item.emoji}</span>
       </div>
       
-      <h3 className="hindi-font text-4xl font-black text-slate-100 group-hover:text-amber-400 transition-colors mb-3 leading-tight">
+      <h3 className="hindi-font text-4xl font-black text-slate-100 group-hover:text-amber-400 group-hover:scale-105 origin-left transition-all duration-500 mb-3 leading-tight">
         {item.word}
       </h3>
       

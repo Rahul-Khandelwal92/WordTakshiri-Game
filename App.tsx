@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, Volume2, Loader2, HelpCircle, Home, Mic2, Star } from 'lucide-react';
+import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, Volume2, Loader2, HelpCircle, Home, Mic2, Star, BookOpen } from 'lucide-react';
 import { GoogleGenAI, Modality } from "@google/genai";
 import { BOLLYWOOD_WORDS } from './constants';
 import { BollywoodWord, Category, FilterState } from './types';
@@ -66,7 +66,6 @@ const playShuffleTick = () => {
 };
 
 const playTickSound = (secondsLeft: number) => {
-  // Higher pitch and slightly louder for the last 5 seconds to build tension
   const freq = secondsLeft <= 5 ? 1200 : 800;
   const vol = secondsLeft <= 5 ? 0.03 : 0.015;
   playTone(freq, 'sine', 0.05, vol);
@@ -95,11 +94,9 @@ const App: React.FC = () => {
   const [showRules, setShowRules] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   
-  // Shuffling animation states
   const [isShuffling, setIsShuffling] = useState(false);
   const [shufflingWord, setShufflingWord] = useState<string>('');
 
-  // Grouping logic for "All Others" bucket
   const { visibleCategories, othersCategories } = useMemo(() => {
     const counts: Record<string, number> = {};
     BOLLYWOOD_WORDS.forEach(w => {
@@ -110,7 +107,6 @@ const App: React.FC = () => {
     return { visibleCategories: visible, othersCategories: others };
   }, []);
 
-  // Filter logic
   const filteredWords = useMemo(() => {
     return BOLLYWOOD_WORDS.filter((item) => {
       const matchSearch = item.word.toLowerCase().includes(filters.search.toLowerCase()) || 
@@ -228,7 +224,7 @@ const App: React.FC = () => {
           <div className="flex justify-center items-center gap-2 md:gap-4 mb-3 relative">
             <Mic2 className="text-amber-500/60 animate-pulse hidden xs:block" size={20} />
             <h1 className="heading-font text-4xl sm:text-5xl md:text-7xl font-black tracking-tight gold-gradient-text drop-shadow-2xl gold-glow">
-              SWAR-TAKSHARI
+              WORD-TAKSHARI
             </h1>
             <Music className="text-amber-500/60 animate-pulse hidden xs:block" style={{ animationDelay: '0.5s' }} size={20} />
           </div>
@@ -249,7 +245,7 @@ const App: React.FC = () => {
           <div className="relative flex items-center justify-center gap-4 md:gap-5">
              <Shuffle size={28} className={`${isShuffling ? 'animate-spin' : 'group-hover:rotate-12 transition-transform'} text-amber-100`} />
              <div className="text-left">
-                <span className="block text-xl md:text-2xl font-black heading-font tracking-wide text-white">ENTER THE ARENA</span>
+                <span className="block text-lg md:text-2xl font-black heading-font tracking-wide text-white uppercase">CHOOSE A RANDOM WORD</span>
                 <span className="block text-[9px] md:text-[10px] uppercase font-bold text-amber-200/50 tracking-widest">Generate Melody</span>
              </div>
           </div>
@@ -260,7 +256,7 @@ const App: React.FC = () => {
           className="sm:w-48 bg-slate-900/40 hover:bg-slate-900/60 p-5 md:p-8 rounded-2xl md:rounded-3xl border border-white/5 flex flex-col items-center justify-center gap-1 transition-all group shadow-xl"
         >
           <Info className="text-slate-500 group-hover:text-amber-500 transition-colors" size={18} />
-          <span className="text-[9px] uppercase font-black tracking-widest text-slate-500 group-hover:text-slate-200">The Code</span>
+          <span className="text-[9px] uppercase font-black tracking-widest text-slate-500 group-hover:text-slate-200">Rules</span>
         </button>
       </div>
 
@@ -324,34 +320,49 @@ const App: React.FC = () => {
       {/* Detail View Overlay */}
       {selectedWord && !isShuffling && (
         <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-300 overflow-y-auto">
-          <div className="w-full max-w-xl bg-slate-900 border border-amber-500/20 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col my-auto h-auto max-h-[90vh]">
+          <div className="w-full max-w-xl bg-slate-900 border border-amber-500/20 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col my-auto h-auto max-h-[95vh] relative">
             
+            {/* Close Button - More spaced for mobile */}
+            <button onClick={resetGame} className="absolute right-4 top-4 md:right-8 md:top-8 text-slate-500 hover:text-white p-3 transition-colors z-[60] bg-slate-950/40 rounded-full border border-white/5 md:bg-transparent md:border-none">
+              <X size={24} />
+            </button>
+
             <div className={`${isTimerActive ? 'p-3 md:p-4' : 'p-6 md:p-10'} text-center relative border-b border-white/5`}>
-              <button onClick={resetGame} className="absolute right-4 md:right-8 top-4 md:top-8 text-slate-500 hover:text-white p-2 transition-colors z-10">
-                <X size={24} />
-              </button>
-              
               <div className={`flex flex-col items-center justify-center gap-4 md:gap-6 transition-all ${isTimerActive ? 'scale-90' : ''}`}>
-                <div className="flex items-center gap-3 md:gap-4">
-                  <h2 className={`${isTimerActive ? 'text-4xl md:text-5xl' : 'text-6xl md:text-8xl'} hindi-font font-black text-amber-400 gold-glow`}>
+                <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 px-4">
+                  <h2 className={`${isTimerActive ? 'text-3xl md:text-5xl' : 'text-5xl sm:text-6xl md:text-8xl'} hindi-font font-black text-amber-400 gold-glow break-words`}>
                     {selectedWord.word}
                   </h2>
-                  <span className={isTimerActive ? 'text-3xl md:text-4xl' : 'text-5xl md:text-6xl'}>{selectedWord.emoji}</span>
+                  <span className={`${isTimerActive ? 'text-2xl md:text-4xl' : 'text-4xl sm:text-5xl md:text-6xl'}`}>{selectedWord.emoji}</span>
                 </div>
                 
                 {!isTimerActive && (
-                  <div className="space-y-3 md:space-y-4">
-                    <button 
-                      onClick={speakWord}
-                      disabled={isSpeaking}
-                      className="flex items-center gap-3 text-amber-200 hover:text-white font-bold text-[8px] md:text-[10px] tracking-widest uppercase bg-white/5 px-6 md:px-8 py-2 md:py-3 rounded-full border border-white/10 active:scale-95 transition-all disabled:opacity-50 mx-auto"
-                    >
-                      {isSpeaking ? <Loader2 className="animate-spin" size={14} /> : <Volume2 size={14} />}
-                      PHONETIC GUIDE
-                    </button>
-                    <p className="text-slate-500 text-lg md:text-xl font-medium tracking-tight italic px-4">
-                      "{selectedWord.englishMeaning}"
-                    </p>
+                  <div className="space-y-4 md:space-y-6">
+                    <div className="space-y-2">
+                      <button 
+                        onClick={speakWord}
+                        disabled={isSpeaking}
+                        className="flex items-center gap-3 text-amber-200 hover:text-white font-bold text-[8px] md:text-[10px] tracking-widest uppercase bg-white/5 px-6 md:px-8 py-2 md:py-3 rounded-full border border-white/10 active:scale-95 transition-all disabled:opacity-50 mx-auto"
+                      >
+                        {isSpeaking ? <Loader2 className="animate-spin" size={14} /> : <Volume2 size={14} />}
+                        PHONETIC GUIDE
+                      </button>
+                      <p className="text-slate-500 text-lg md:text-xl font-medium tracking-tight italic px-4">
+                        "{selectedWord.englishMeaning}"
+                      </p>
+                    </div>
+
+                    {/* Instruction Callout */}
+                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 md:p-5 animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                       <p className="text-amber-400 text-[10px] md:text-xs font-black uppercase tracking-widest mb-1">Objective</p>
+                       <p className="text-white text-sm md:text-base font-bold">Sing a Bollywood song featuring the word <span className="text-amber-400">"{selectedWord.word}"</span>!</p>
+                       <button 
+                        onClick={() => setShowRules(true)}
+                        className="mt-3 flex items-center gap-2 mx-auto text-[9px] font-black uppercase text-amber-500/60 hover:text-amber-400 transition-colors"
+                       >
+                         <BookOpen size={10} /> View full rules
+                       </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -364,7 +375,7 @@ const App: React.FC = () => {
                     onClick={startTimer}
                     className="flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 font-black py-6 md:py-8 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl hover:brightness-110 active:scale-[0.98] transition-all"
                   >
-                    <TimerIcon size={20} className="md:size-24" />
+                    <TimerIcon className="w-5 h-5 md:w-6 md:h-6" />
                     <span className="text-xs md:text-sm heading-font tracking-widest">START TIMER</span>
                     <span className="text-[7px] md:text-[8px] font-bold opacity-70 uppercase tracking-tight">Challenge On</span>
                   </button>
@@ -373,7 +384,7 @@ const App: React.FC = () => {
                     onClick={showAnswers}
                     className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-amber-500 font-bold py-6 md:py-8 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 transition-all active:scale-[0.98]"
                   >
-                    <Eye size={20} className="md:size-24" />
+                    <Eye className="w-5 h-5 md:w-6 md:h-6" />
                     <span className="text-xs md:text-sm heading-font tracking-widest uppercase">LYRICAL CLUES</span>
                     <span className="text-[7px] md:text-[8px] font-bold opacity-50 uppercase tracking-tight">Hints & Lyrics</span>
                   </button>
@@ -396,7 +407,7 @@ const App: React.FC = () => {
                         onClick={() => { triggerConfetti(); handlePickRandom(); }}
                         className="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white font-black rounded-2xl md:rounded-3xl shadow-xl flex flex-col items-center justify-center gap-1 transition-all active:translate-y-1"
                       >
-                        <CheckCircle size={18} md:size={22} />
+                        <CheckCircle className="w-[18px] h-[18px] md:w-[22px] md:h-[22px]" />
                         <span className="text-xs md:text-sm uppercase tracking-wide">VICTORY</span>
                       </button>
 
@@ -404,7 +415,7 @@ const App: React.FC = () => {
                         onClick={showAnswers}
                         className="flex-1 bg-slate-800 text-slate-400 font-bold rounded-2xl md:rounded-3xl border border-white/5 flex flex-col items-center justify-center gap-1 transition-all active:scale-95"
                       >
-                        <HelpCircle size={18} md:size={22} className="text-amber-500" />
+                        <HelpCircle className="text-amber-500 w-[18px] h-[18px] md:w-[22px] md:h-[22px]" />
                         <span className="text-xs md:text-sm uppercase tracking-wide">LOST?</span>
                       </button>
                     </div>
@@ -453,15 +464,15 @@ const App: React.FC = () => {
 
       {/* Rules Modal */}
       {showRules && (
-        <div className="fixed inset-0 z-50 bg-black/98 flex items-center justify-center p-4 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] bg-black/98 flex items-center justify-center p-4 backdrop-blur-md">
           <div className="w-full max-w-md bg-slate-900 border border-amber-500/20 rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 relative shadow-[0_0_100px_rgba(212,175,55,0.1)] overflow-y-auto max-h-[90vh]">
             <button onClick={() => setShowRules(false)} className="absolute right-6 top-6 text-slate-600 hover:text-white p-2 transition-colors"><X size={24} /></button>
-            <h2 className="heading-font text-3xl md:text-4xl font-black text-amber-500 mb-8 md:mb-10 tracking-widest">THE CODE</h2>
+            <h2 className="heading-font text-3xl md:text-4xl font-black text-amber-500 mb-8 md:mb-10 tracking-widest uppercase">RULES</h2>
             <div className="space-y-6 md:space-y-8 text-slate-400 font-medium leading-relaxed md:leading-loose text-xs md:text-sm">
-              <p>I. Select your keyword from the <span className="text-amber-200">Arena</span> or shuffle for a surprise.</p>
-              <p>II. A <span className="text-amber-200">15-second countdown</span> tracks your melodic response.</p>
-              <p>III. Sing any Bollywood track featuring the chosen word.</p>
-              <p>IV. Should you falter, <span className="text-rose-400">Lyrical Clues</span> are available to guide the chorus.</p>
+              <p>I. Select your keyword from the tile selection or use the <span className="text-amber-200">Random Word</span> shuffle.</p>
+              <p>II. Once selected, a <span className="text-amber-200">15-second countdown</span> tracks your time to sing.</p>
+              <p>III. <span className="text-amber-200 font-bold underline">You MUST sing any Bollywood track featuring the chosen word.</span></p>
+              <p>IV. If you are stuck, use <span className="text-amber-200">Lyrical Clues</span> to see song references and lyrics snippets.</p>
             </div>
             <button onClick={() => setShowRules(false)} className="w-full mt-10 md:mt-12 bg-amber-500 text-slate-950 font-black py-4 md:py-5 rounded-xl md:rounded-2xl shadow-2xl hover:brightness-110 active:translate-y-1 transition-all uppercase tracking-widest text-xs md:text-sm">COMMAND THE STAGE</button>
           </div>
