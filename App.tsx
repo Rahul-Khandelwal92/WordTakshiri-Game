@@ -1,6 +1,5 @@
-
 import React, { useState, useMemo, useCallback } from 'react';
-import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, Volume2, Loader2, HelpCircle, Home } from 'lucide-react';
+import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, Volume2, Loader2, HelpCircle, Home, Mic2, Star } from 'lucide-react';
 import { GoogleGenAI, Modality } from "@google/genai";
 import { BOLLYWOOD_WORDS } from './constants';
 import { BollywoodWord, Category, FilterState } from './types';
@@ -40,7 +39,7 @@ async function decodeAudioData(
 // Audio Logic for game sounds using Web Audio API
 const gameAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
 
-const playTone = (freq: number, type: OscillatorType, duration: number, volume: number = 0.1) => {
+const playTone = (freq: number, type: OscillatorType, duration: number, volume: number = 0.05) => {
   if (gameAudioCtx.state === 'suspended') {
     gameAudioCtx.resume();
   }
@@ -57,38 +56,24 @@ const playTone = (freq: number, type: OscillatorType, duration: number, volume: 
 };
 
 const playStartTune = () => {
-  playTone(261.63, 'sine', 0.5); // C4
-  setTimeout(() => playTone(329.63, 'sine', 0.5), 200); // E4
-  setTimeout(() => playTone(392.00, 'sine', 0.8), 400); // G4
+  playTone(392, 'sine', 0.4); // G4
+  setTimeout(() => playTone(493.88, 'sine', 0.4), 150); // B4
+  setTimeout(() => playTone(587.33, 'sine', 0.6), 300); // D5
 };
 
 const playShuffleTick = () => {
-  playTone(660 + Math.random() * 100, 'sine', 0.05, 0.03);
-};
-
-const playRandomReveal = () => {
-  playTone(392.00, 'square', 0.15, 0.05); // G4
-  setTimeout(() => playTone(493.88, 'square', 0.15, 0.05), 100); // B4
-  setTimeout(() => playTone(587.33, 'square', 0.15, 0.05), 200); // D5
-  setTimeout(() => playTone(783.99, 'square', 0.3, 0.05), 300); // G5
+  playTone(440 + Math.random() * 200, 'triangle', 0.04, 0.02);
 };
 
 const playEndTune = () => {
-  playTone(392.00, 'triangle', 0.5); // G4
-  setTimeout(() => playTone(329.63, 'triangle', 0.5), 200); // E4
-  setTimeout(() => playTone(261.63, 'triangle', 1.0), 400); // C4
-};
-
-const playTickTune = (timeLeft: number) => {
-  const freq = timeLeft <= 3 ? 880 : 440;
-  playTone(freq, 'sine', 0.1, 0.05);
+  playTone(261.63, 'square', 0.8, 0.03);
 };
 
 const triggerConfetti = () => {
   const flash = document.createElement('div');
-  flash.className = 'fixed inset-0 z-[100] pointer-events-none bg-amber-500/20 animate-pulse';
+  flash.className = 'fixed inset-0 z-[100] pointer-events-none bg-amber-500/10 animate-pulse';
   document.body.appendChild(flash);
-  setTimeout(() => flash.remove(), 1000);
+  setTimeout(() => flash.remove(), 800);
 };
 
 const App: React.FC = () => {
@@ -113,8 +98,8 @@ const App: React.FC = () => {
     BOLLYWOOD_WORDS.forEach(w => {
       counts[w.category] = (counts[w.category] || 0) + 1;
     });
-    const visible = Object.values(Category).filter(cat => counts[cat] >= 6);
-    const others = Object.values(Category).filter(cat => counts[cat] > 0 && counts[cat] < 6);
+    const visible = Object.values(Category).filter(cat => counts[cat] >= 5);
+    const others = Object.values(Category).filter(cat => counts[cat] > 0 && counts[cat] < 5);
     return { visibleCategories: visible, othersCategories: others };
   }, []);
 
@@ -144,7 +129,7 @@ const App: React.FC = () => {
     setIsShowingAnswers(false);
 
     let count = 0;
-    const maxCount = 20; 
+    const maxCount = 15; 
     const interval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * BOLLYWOOD_WORDS.length);
       setShufflingWord(BOLLYWOOD_WORDS[randomIndex].word);
@@ -157,9 +142,8 @@ const App: React.FC = () => {
         setTimeout(() => {
           setIsShuffling(false);
           setSelectedWord(finalWord);
-          playRandomReveal();
           triggerConfetti();
-        }, 100);
+        }, 150);
       }
     }, 80); 
   };
@@ -187,24 +171,12 @@ const App: React.FC = () => {
     setIsShowingAnswers(false);
   };
 
-  const handleTimerComplete = useCallback(() => {
-    setIsTimerActive(false);
-    setIsShowingAnswers(true);
-    playEndTune();
-  }, []);
-
-  const handleTick = useCallback((timeLeft: number) => {
-    if (timeLeft >= 0) {
-      playTickTune(timeLeft);
-    }
-  }, []);
-
   const speakWord = async () => {
     if (!selectedWord || isSpeaking) return;
     
     setIsSpeaking(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash-preview-tts",
         contents: [{ parts: [{ text: `Say clearly: ${selectedWord.word}` }] }],
@@ -242,158 +214,101 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20 px-4 pt-6 max-w-4xl mx-auto">
+    <div className="min-h-screen pb-16 px-4 pt-10 max-w-5xl mx-auto selection:bg-amber-500/30">
       {/* Header */}
-      <header className="mb-6 text-center group">
+      <header className="mb-12 text-center group">
         <div className="relative inline-flex flex-col items-center">
-          <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-rose-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          <div className="flex justify-center items-center gap-3 mb-2 relative">
-            <div className="relative">
-              <Music className="text-amber-500 animate-pulse" size={20} />
-              <div className="absolute -inset-1 bg-amber-400/30 blur-sm rounded-full animate-ping" />
-            </div>
-            <h1 className="heading-font text-4xl md:text-6xl font-black tracking-[0.1em] leading-tight select-none">
-              <span className="bg-clip-text text-transparent bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">WORD-</span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-b from-orange-400 via-rose-500 to-rose-700 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">TAKSHARI</span>
+          <div className="flex justify-center items-center gap-4 mb-3 relative">
+            <Mic2 className="text-amber-500/60 animate-pulse" size={24} />
+            <h1 className="heading-font text-5xl md:text-7xl font-black tracking-tight gold-gradient-text drop-shadow-2xl gold-glow">
+              SWAR-TAKSHARI
             </h1>
-            <div className="relative">
-              <Music className="text-rose-500 animate-pulse" size={20} />
-              <div className="absolute -inset-1 bg-rose-400/30 blur-sm rounded-full animate-ping" style={{ animationDelay: '0.5s' }} />
-            </div>
+            <Music className="text-amber-500/60 animate-pulse" style={{ animationDelay: '0.5s' }} size={24} />
           </div>
-          <div className="flex items-center gap-2 relative">
-            <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-slate-600" />
-            <p className="text-slate-400 text-[9px] md:text-[11px] font-bold tracking-[0.3em] uppercase opacity-80 group-hover:opacity-100 group-hover:text-amber-400/80 transition-all">
-              A Bollywood Singing Challenge
-            </p>
-            <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-slate-600" />
-          </div>
+          <p className="text-amber-500/40 text-[9px] md:text-xs font-bold tracking-[0.5em] uppercase opacity-80">
+            The Definitive Bollywood Singing Arena
+          </p>
         </div>
       </header>
 
       {/* Primary Action Button */}
-      <div className="space-y-4 mb-8">
+      <div className="flex flex-col sm:flex-row gap-4 mb-12">
         <button 
           onClick={handlePickRandom}
           disabled={isShuffling}
-          className="w-full relative flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 hover:from-amber-300 hover:to-rose-500 text-white font-black py-6 px-6 rounded-[2rem] shadow-[0_15px_40px_rgba(251,191,36,0.2)] transition-all active:scale-95 disabled:opacity-50 overflow-hidden group border-b-4 border-rose-800"
+          className="flex-1 relative overflow-hidden group bg-gradient-to-br from-amber-600 to-amber-900 p-8 rounded-3xl border border-amber-500/20 shadow-2xl transition-all active:scale-[0.98] disabled:opacity-50"
         >
-          <div className="flex items-center gap-3">
-             <Shuffle size={24} className={isShuffling ? 'animate-spin' : 'group-hover:rotate-12 transition-transform'} />
-             <span className="text-xl sm:text-2xl tracking-tight uppercase drop-shadow-md">PICK A RANDOM WORD</span>
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20 pointer-events-none" />
+          <div className="relative flex items-center justify-center gap-5">
+             <Shuffle size={32} className={`${isShuffling ? 'animate-spin' : 'group-hover:rotate-12 transition-transform'} text-amber-100`} />
+             <div className="text-left">
+                <span className="block text-2xl font-black heading-font tracking-wide text-white">ENTER THE ARENA</span>
+                <span className="block text-[10px] uppercase font-bold text-amber-200/50 tracking-widest">Generate Melody</span>
+             </div>
           </div>
-          <span className="text-[10px] sm:text-xs font-medium opacity-90 tracking-[0.25em] uppercase">Start your challenge</span>
-          {isShuffling && <div className="absolute inset-0 bg-white/10 animate-pulse" />}
         </button>
-        <div className="flex justify-center">
-           <button 
-            onClick={() => setShowRules(true)}
-            className="flex items-center gap-1.5 text-slate-500 hover:text-amber-400 font-bold text-[9px] uppercase tracking-[0.2em] transition-all bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-800"
-          >
-            <Info size={12} />
-            How to Play
-          </button>
-        </div>
+
+        <button 
+          onClick={() => setShowRules(true)}
+          className="sm:w-48 bg-slate-900/40 hover:bg-slate-900/60 p-8 rounded-3xl border border-white/5 flex flex-col items-center justify-center gap-1 transition-all group shadow-xl"
+        >
+          <Info className="text-slate-500 group-hover:text-amber-500 transition-colors" size={20} />
+          <span className="text-[10px] uppercase font-black tracking-widest text-slate-500 group-hover:text-slate-200">The Code</span>
+        </button>
       </div>
 
       {/* Filters & Search */}
       {!selectedWord && !isShuffling && (
-        <div className="space-y-6 mb-8 bg-slate-900/50 p-6 rounded-3xl border border-slate-800 backdrop-blur-sm">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-            <input 
-              type="text" 
-              placeholder="Search words (e.g. Dil, Pyaar)..."
-              value={filters.search}
-              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-              className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all shadow-inner"
-            />
-          </div>
-          <div className="space-y-3">
-            <span className="text-[10px] text-slate-500 uppercase font-black tracking-widest block px-1">Themes</span>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setFilters(prev => ({ ...prev, category: 'All' }))}
-                className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                  filters.category === 'All' 
-                    ? 'bg-amber-500 border-amber-500 text-slate-900 shadow-lg shadow-amber-500/20' 
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                All
-              </button>
-              {visibleCategories.map((cat) => (
+        <section className="animate-in fade-in duration-700">
+          <div className="mb-8 flex flex-col md:flex-row gap-4 items-center glass-panel p-4 rounded-3xl">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500/30" size={18} />
+              <input 
+                type="text" 
+                placeholder="Search lyrical themes..."
+                value={filters.search}
+                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                className="w-full bg-slate-950/40 border border-white/5 text-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-amber-500/40 transition-all placeholder:text-slate-600"
+              />
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto no-scrollbar">
+              {['All', ...visibleCategories, 'All Others'].map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setFilters(prev => ({ ...prev, category: cat }))}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
+                  onClick={() => setFilters(prev => ({ ...prev, category: cat as any }))}
+                  className={`px-5 py-3 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${
                     filters.category === cat 
-                      ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20' 
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                      ? 'bg-amber-500 border-amber-400 text-slate-950 shadow-lg' 
+                      : 'bg-slate-900/40 border-white/5 text-slate-500 hover:text-slate-300'
                   }`}
                 >
                   {cat}
                 </button>
               ))}
-              {othersCategories.length > 0 && (
-                <button
-                  onClick={() => setFilters(prev => ({ ...prev, category: 'All Others' }))}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                    filters.category === 'All Others' 
-                      ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20' 
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  All Others
-                </button>
-              )}
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Words Grid */}
-      {!selectedWord && !isShuffling && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {filteredWords.map((item) => (
-            <WordCard key={item.id} item={item} onClick={handleWordClick} />
-          ))}
-          {filteredWords.length === 0 && (
-            <div className="col-span-full py-20 text-center space-y-4">
-              <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto text-slate-600">
-                <Search size={32} />
-              </div>
-              <p className="text-slate-500 font-medium">No matches found.</p>
-              <button 
-                onClick={() => setFilters({ category: 'All', search: '' })}
-                className="text-amber-500 font-bold hover:underline"
-              >
-                Clear all filters
-              </button>
-            </div>
-          )}
-        </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {filteredWords.map((item) => (
+              <WordCard key={item.id} item={item} onClick={handleWordClick} />
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Shuffle Animation */}
       {isShuffling && (
-        <div className="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-center p-4">
-          <div className="relative flex flex-col items-center">
-            <div className="absolute -top-12 animate-bounce">
-              <Sparkles className="text-amber-400 w-8 h-8" />
-            </div>
-            <div className="text-center space-y-4">
-              <p className="text-amber-500 font-bold tracking-[0.3em] text-xs uppercase opacity-70">Shuffling Hits...</p>
-              <div className="h-40 flex items-center justify-center">
-                <h2 className="hindi-font text-8xl font-black text-white transition-all duration-75 scale-110 blur-[1px] animate-pulse">
+        <div className="fixed inset-0 z-[60] bg-black/95 flex flex-col items-center justify-center p-6 backdrop-blur-xl">
+          <div className="relative">
+            <div className="absolute -inset-24 bg-amber-500/10 blur-[120px] rounded-full animate-pulse" />
+            <div className="text-center relative">
+              <p className="text-amber-500 font-black tracking-[0.5em] text-[10px] uppercase mb-12 opacity-60">Melodic Shuffling...</p>
+              <div className="h-48 flex items-center justify-center">
+                <h2 className="hindi-font text-8xl font-black text-white transition-all blur-[2px] scale-110 animate-pulse">
                   {shufflingWord}
                 </h2>
               </div>
-              <div className="flex gap-2 justify-center">
-                {[0, 1, 2].map((i) => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: `${i * 0.1}s` }} />
-                ))}
-              </div>
+              <Sparkles className="text-amber-500/30 mx-auto mt-8 animate-bounce" size={24} />
             </div>
           </div>
         </div>
@@ -401,120 +316,90 @@ const App: React.FC = () => {
 
       {/* Detail View Overlay */}
       {selectedWord && !isShuffling && (
-        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-2 sm:p-4 animate-in fade-in zoom-in-95 duration-300">
-          <div className="w-full max-w-lg bg-slate-900 border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-amber-500/10 flex flex-col max-h-[95vh] sm:max-h-[90vh]">
+        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-xl bg-slate-900 border border-amber-500/20 rounded-[3rem] overflow-hidden shadow-2xl flex flex-col max-h-[96vh]">
             
-            {/* Conditional Header: Smaller if timer is active */}
-            <div className={`${isTimerActive ? 'p-3' : 'p-6'} text-center border-b border-slate-800 relative transition-all`}>
-              <button 
-                onClick={resetGame}
-                className="absolute right-4 top-2 text-slate-500 hover:text-white transition-colors p-2"
-              >
-                <X size={20} />
+            <div className={`${isTimerActive ? 'p-4' : 'p-10'} text-center relative border-b border-white/5`}>
+              <button onClick={resetGame} className="absolute right-8 top-8 text-slate-500 hover:text-white p-2 transition-colors">
+                <X size={28} />
               </button>
               
-              <div className={`mb-1 flex justify-center gap-2 items-center ${isTimerActive ? 'scale-75 origin-top' : ''}`}>
-                <span className="text-[10px] uppercase font-black bg-slate-800 text-slate-400 px-3 py-1 rounded-full border border-slate-700">
-                  {selectedWord.category}
-                </span>
-              </div>
-
-              <div className={`flex flex-col items-center justify-center gap-2 mb-1 ${isTimerActive ? 'scale-90' : ''}`}>
+              <div className={`flex flex-col items-center justify-center gap-6 transition-all ${isTimerActive ? 'scale-90' : ''}`}>
                 <div className="flex items-center gap-4">
-                  <h2 className={`${isTimerActive ? 'text-4xl' : 'text-6xl'} hindi-font font-bold text-amber-400 transition-all`}>
+                  <h2 className={`${isTimerActive ? 'text-5xl' : 'text-8xl'} hindi-font font-black text-amber-400 gold-glow`}>
                     {selectedWord.word}
                   </h2>
-                  <span className={isTimerActive ? 'text-3xl' : 'text-5xl'}>{selectedWord.emoji}</span>
+                  <span className={isTimerActive ? 'text-4xl' : 'text-6xl'}>{selectedWord.emoji}</span>
                 </div>
                 
-                {/* Hide pronunciation and meaning during timer to save space */}
                 {!isTimerActive && (
-                  <>
+                  <div className="space-y-4">
                     <button 
                       onClick={speakWord}
                       disabled={isSpeaking}
-                      className="flex items-center gap-2 text-amber-500 hover:text-amber-400 font-bold text-sm bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/20 active:scale-95 transition-all disabled:opacity-50"
+                      className="flex items-center gap-3 text-amber-200 hover:text-white font-bold text-[10px] tracking-widest uppercase bg-white/5 px-8 py-3 rounded-full border border-white/10 active:scale-95 transition-all disabled:opacity-50"
                     >
                       {isSpeaking ? <Loader2 className="animate-spin" size={16} /> : <Volume2 size={16} />}
-                      HEAR PRONUNCIATION
+                      PHONETIC GUIDE
                     </button>
-                    <p className="text-slate-400 text-lg font-light italic mt-2">
-                      {selectedWord.englishMeaning}
+                    <p className="text-slate-500 text-xl font-medium tracking-tight italic">
+                      "{selectedWord.englishMeaning}"
                     </p>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
 
-            <div className={`${isTimerActive ? 'p-3' : 'p-6'} flex-1 overflow-y-auto`}>
+            <div className={`${isTimerActive ? 'p-4' : 'p-8'} flex-1 overflow-y-auto`}>
               {!isTimerActive && !isShowingAnswers && (
-                <div className="flex flex-col gap-4 py-8 animate-in zoom-in-95 duration-300">
+                <div className="grid grid-cols-2 gap-4 py-4">
                   <button 
                     onClick={startTimer}
-                    className="flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black py-8 px-6 rounded-3xl shadow-xl shadow-amber-500/20 transition-all active:scale-95"
+                    className="flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 font-black py-8 rounded-[2rem] shadow-2xl hover:brightness-110 active:scale-[0.98] transition-all"
                   >
-                    <TimerIcon size={32} />
-                    <span className="text-xl">START TIMER</span>
-                    <span className="text-[10px] font-normal opacity-80 uppercase tracking-widest">15 Seconds Challenge</span>
+                    <TimerIcon size={24} />
+                    <span className="text-sm heading-font tracking-widest">START TIMER</span>
+                    <span className="text-[8px] font-bold opacity-70 uppercase tracking-tight">Challenge On</span>
                   </button>
-                  <div className="flex items-center gap-4 text-slate-700 my-2">
-                    <div className="h-[1px] flex-1 bg-slate-800"></div>
-                    <span className="text-xs font-bold">OR</span>
-                    <div className="h-[1px] flex-1 bg-slate-800"></div>
-                  </div>
+
                   <button 
                     onClick={showAnswers}
-                    className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-black py-8 px-6 rounded-3xl shadow-lg transition-all active:scale-95"
+                    className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-amber-500 font-bold py-8 rounded-[2rem] border border-white/5 transition-all active:scale-[0.98]"
                   >
-                    <Eye size={32} />
-                    <span className="text-xl">SHOW ANSWERS</span>
-                    <span className="text-[10px] font-normal opacity-80 uppercase tracking-widest">Reveal Song Hints</span>
+                    <Eye size={24} />
+                    <span className="text-sm heading-font tracking-widest">LYRICAL CLUES</span>
+                    <span className="text-[8px] font-bold opacity-50 uppercase tracking-tight">Hints & Lyrics</span>
                   </button>
                 </div>
               )}
 
               {isTimerActive && !isShowingAnswers && (
-                <div className="flex flex-col items-center justify-center space-y-4 py-1 animate-in fade-in duration-500">
+                <div className="flex flex-col items-center justify-center space-y-10">
                   <Timer 
                     duration={15} 
-                    onComplete={handleTimerComplete} 
-                    onTick={handleTick}
+                    onComplete={() => { setIsTimerActive(false); setIsShowingAnswers(true); playEndTune(); }} 
                     isActive={true} 
                   />
                   
-                  <div className="w-full max-w-md space-y-4">
-                    <div className="text-center">
-                      <p className="text-slate-300 text-sm leading-relaxed">Sing a song with <span className="text-amber-400 font-bold">"{selectedWord.word}"</span>!</p>
-                    </div>
-
-                    <div className="flex flex-row gap-2 items-stretch pb-2">
+                  <div className="w-full space-y-8">
+                    <p className="text-slate-400 text-center font-medium text-sm italic">"Let the melody flow..."</p>
+                    <div className="flex gap-4 h-24">
                       <button 
-                        onClick={() => {
-                          triggerConfetti();
-                          handlePickRandom();
-                        }}
-                        className="flex-1 relative flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-emerald-400 via-emerald-600 to-teal-700 hover:from-emerald-300 hover:to-teal-600 text-white font-black py-4 px-2 rounded-[1.25rem] shadow-lg border-b-4 border-emerald-900 transition-all active:scale-95 active:border-b-0 group overflow-hidden"
+                        onClick={() => { triggerConfetti(); handlePickRandom(); }}
+                        className="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white font-black rounded-3xl shadow-xl flex flex-col items-center justify-center gap-1 transition-all active:translate-y-1"
                       >
-                        <div className="bg-white/20 p-1 rounded-full shadow-inner">
-                          <CheckCircle size={14} className="drop-shadow-sm" />
-                        </div>
-                        <div className="text-center flex flex-col">
-                          <span className="text-xs sm:text-sm uppercase tracking-tight drop-shadow-md">I DID IT!</span>
-                          <span className="text-[7px] font-bold opacity-80 uppercase tracking-tighter">NEXT WORD</span>
-                        </div>
+                        <CheckCircle size={22} />
+                        <span className="text-sm">VICTORY</span>
+                        <span className="text-[8px] opacity-60 uppercase">NEXT TRACK</span>
                       </button>
 
                       <button 
                         onClick={showAnswers}
-                        className="flex-1 flex flex-col items-center justify-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-4 px-2 rounded-[1.25rem] border border-slate-700 shadow-lg transition-all active:scale-95 group"
+                        className="flex-1 bg-slate-800 text-slate-400 font-bold rounded-3xl border border-white/5 flex flex-col items-center justify-center gap-1 transition-all active:scale-95"
                       >
-                        <div className="bg-slate-700 p-1 rounded-full">
-                          <HelpCircle size={14} className="text-amber-500" />
-                        </div>
-                        <div className="text-center flex flex-col">
-                          <span className="text-xs sm:text-sm uppercase tracking-tight">I DON'T KNOW</span>
-                          <span className="text-[7px] font-bold opacity-60 uppercase tracking-tighter">REVEAL HINTS</span>
-                        </div>
+                        <HelpCircle size={22} className="text-amber-500" />
+                        <span className="text-sm">LOST?</span>
+                        <span className="text-[8px] opacity-60 uppercase">REVEAL LYRICS</span>
                       </button>
                     </div>
                   </div>
@@ -522,56 +407,39 @@ const App: React.FC = () => {
               )}
 
               {isShowingAnswers && (
-                <div className="space-y-4 animate-in zoom-in-95 duration-500">
-                  <div className="flex items-center justify-between text-slate-400 mb-1">
-                    <div className="flex items-center gap-2">
-                      <Trophy size={16} className="text-yellow-500" />
-                      <h4 className="font-bold text-[10px] tracking-widest uppercase">Song Hints</h4>
-                    </div>
+                <div className="space-y-6 animate-in slide-in-from-bottom-6 duration-600">
+                  <div className="flex items-center gap-2 text-amber-500 px-4">
+                    <Star size={16} fill="currentColor" />
+                    <h4 className="font-black text-[10px] tracking-[0.3em] uppercase">Iconic Verse References</h4>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {selectedWord.songs.map((song, i) => (
-                      <div 
-                        key={i} 
-                        className="bg-slate-800/40 p-3 rounded-xl border border-slate-700/30 flex items-center justify-between group hover:bg-slate-800 transition-colors"
-                      >
-                        <div className="flex-1 pr-3">
-                          <p className="text-amber-100 font-bold text-sm leading-tight mb-1">{song.title}</p>
-                          <p className="text-slate-400 text-[9px] italic">"{song.lyrics}"</p>
+                      <div key={i} className="bg-white/5 p-5 rounded-3xl border border-white/5 flex items-center justify-between group">
+                        <div className="flex-1 pr-4">
+                          <p className="text-amber-100 font-bold text-base leading-tight mb-2 tracking-tight">{song.title}</p>
+                          <p className="text-slate-500 text-[10px] leading-relaxed italic line-clamp-2">"{song.lyrics}"</p>
                         </div>
                         <a 
-                          href={`https://www.youtube.com/results?search_query=${encodeURIComponent(song.title + " Bollywood Song")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 text-amber-500 transition-all active:scale-90 flex-shrink-0"
+                          href={`https://www.youtube.com/results?search_query=${encodeURIComponent(song.title)}`}
+                          target="_blank" rel="noopener noreferrer"
+                          className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 hover:bg-amber-500 hover:text-slate-950 transition-all active:scale-90"
                         >
-                          <Play size={14} fill="currentColor" />
+                          <Play size={18} fill="currentColor" />
                         </a>
                       </div>
                     ))}
                   </div>
-                  <button 
-                    onClick={() => {
-                      triggerConfetti();
-                      resetGame();
-                    }}
-                    className="w-full bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-bold py-3 rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 mt-2 uppercase text-xs"
-                  >
-                    <Home size={14} />
-                    Back to Home
+                  <button onClick={() => { triggerConfetti(); resetGame(); }} className="w-full bg-slate-800/50 hover:bg-slate-800 text-slate-300 font-black py-5 rounded-2xl flex items-center justify-center gap-3 text-[10px] tracking-[0.2em] uppercase transition-all">
+                    <Home size={18} /> EXIT THE STAGE
                   </button>
                 </div>
               )}
             </div>
 
-            <div className="p-3 bg-slate-950/50 text-center border-t border-slate-800">
-              <button 
-                onClick={handlePickRandom}
-                className="text-slate-500 hover:text-amber-400 flex items-center justify-center gap-2 mx-auto text-[10px] font-medium transition-colors"
-              >
-                <RefreshCw size={12} />
-                ANOTHER RANDOM WORD
-              </button>
+            <div className="p-5 bg-black/40 text-center border-t border-white/5">
+               <button onClick={handlePickRandom} className="text-slate-600 hover:text-amber-500 flex items-center justify-center gap-2 mx-auto text-[10px] font-black tracking-widest transition-colors uppercase">
+                 <RefreshCw size={14} /> NEW CHALLENGE
+               </button>
             </div>
           </div>
         </div>
@@ -579,29 +447,17 @@ const App: React.FC = () => {
 
       {/* Rules Modal */}
       {showRules && (
-        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-8 relative">
-            <button onClick={() => setShowRules(false)} className="absolute right-6 top-6 text-slate-500 hover:text-white"><X size={20} /></button>
-            <h2 className="heading-font text-3xl font-bold text-amber-500 mb-6 flex items-center gap-2"><Info /> HOW TO PLAY</h2>
-            <div className="space-y-6 text-slate-300 text-sm">
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">1</div>
-                <p>Pick a word to enter the <span className="text-amber-400 font-bold">Challenge Zone</span>.</p>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">2</div>
-                <p>Learn its meaning or hear how it's said.</p>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">3</div>
-                <p>Sing a song within <span className="text-amber-400 font-bold">15 seconds</span>.</p>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-amber-500 font-bold border border-amber-500/30">4</div>
-                <p>If you fail, song hints are revealed. Play together for fun!</p>
-              </div>
+        <div className="fixed inset-0 z-50 bg-black/98 flex items-center justify-center p-4 backdrop-blur-md">
+          <div className="w-full max-w-md bg-slate-900 border border-amber-500/20 rounded-[3rem] p-12 relative shadow-[0_0_100px_rgba(212,175,55,0.1)]">
+            <button onClick={() => setShowRules(false)} className="absolute right-10 top-10 text-slate-600 hover:text-white p-2 transition-colors"><X size={28} /></button>
+            <h2 className="heading-font text-4xl font-black text-amber-500 mb-10 tracking-widest">THE CODE</h2>
+            <div className="space-y-8 text-slate-400 font-medium leading-loose text-sm">
+              <p>I. Select your keyword from the <span className="text-amber-200">Arena</span> or shuffle for a surprise.</p>
+              <p>II. A <span className="text-amber-200">15-second countdown</span> tracks your melodic response.</p>
+              <p>III. Sing any Bollywood track featuring the chosen word.</p>
+              <p>IV. Should you falter, <span className="text-rose-400">Lyrical Clues</span> are available to guide the chorus.</p>
             </div>
-            <button onClick={() => setShowRules(false)} className="w-full mt-8 bg-amber-500 text-slate-900 font-black py-4 rounded-xl shadow-lg">START SINGING</button>
+            <button onClick={() => setShowRules(false)} className="w-full mt-12 bg-amber-500 text-slate-950 font-black py-5 rounded-2xl shadow-2xl hover:brightness-110 active:translate-y-1 transition-all uppercase tracking-widest">COMMAND THE STAGE</button>
           </div>
         </div>
       )}

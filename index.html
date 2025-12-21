@@ -4,31 +4,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word-takshari</title>
+    <title>Swar-Takshari | The Ultimate Bollywood Singing Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Montserrat:wght@300;400;600;700&family=Hind:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;400;500;600;700&family=Hind:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --gold: #d4af37;
+            --rose: #b76e79;
+            --navy: #050810;
+        }
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: var(--navy);
+            color: #f1f5f9;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% -20%, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
         }
         .hindi-font {
             font-family: 'Hind', sans-serif;
         }
         .heading-font {
-            font-family: 'Poiret+One', cursive;
+            font-family: 'Cinzel', serif;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(180deg, #fde68a 0%, #d4af37 50%, #b45309 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-glow {
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         ::-webkit-scrollbar-track {
-            background: #1e293b;
+            background: #020617;
         }
         ::-webkit-scrollbar-thumb {
-            background: #fbbf24;
+            background: linear-gradient(to bottom, #d4af37, #b45309);
             border-radius: 10px;
+        }
+        @keyframes spotlight {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        .spotlight {
+            position: fixed;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150vw;
+            height: 120vh;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+            animation: spotlight 10s ease-in-out infinite;
         }
     </style>
 <script type="importmap">
@@ -46,8 +82,8 @@
 </script>
 </head>
 <body>
+    <div class="spotlight"></div>
     <div id="root"></div>
-    <!-- This script tag is the entry point that makes the app run -->
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>
