@@ -8,25 +8,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;400;500;600;700&family=Hind:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold: #d4af37;
-            --rose: #b76e79;
-            --navy: #050810;
-            --midnight: #020617;
-            --sky: #38bdf8;
-            --spotlight-color: rgba(212, 175, 55, 0.08);
+            --primary-accent: #10b981; /* Emerald 500 */
+            --secondary-accent: #06b6d4; /* Cyan 500 */
+            --bg-base: #ffffff;
+            --bg-panel: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --spotlight-color: rgba(16, 185, 129, 0.05);
         }
         
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: var(--navy);
-            color: #f1f5f9;
+            background-color: var(--bg-base);
+            color: var(--text-main);
             overflow-x: hidden;
-            transition: background-color 0.5s ease;
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
         }
 
         body.midnight {
-            background-color: var(--midnight);
-            --spotlight-color: rgba(56, 189, 248, 0.08);
+            --bg-base: #000000;
+            --bg-panel: #111111;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --spotlight-color: rgba(45, 212, 191, 0.08);
+            background-color: var(--bg-base);
+            color: var(--text-main);
         }
 
         .hindi-font {
@@ -36,51 +42,57 @@
             font-family: 'Cinzel', serif;
         }
         
-        .gold-gradient-text {
-            background: linear-gradient(180deg, #fde68a 0%, #d4af37 50%, #b45309 100%);
+        .ocean-gradient-text {
+            background: linear-gradient(180deg, #059669 0%, #10b981 50%, #064e3b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .cyber-gradient-text {
-            background: linear-gradient(180deg, #bae6fd 0%, #38bdf8 50%, #0369a1 100%);
+        .mint-gradient-text {
+            background: linear-gradient(180deg, #2dd4bf 0%, #06b6d4 50%, #0891b2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .gold-glow {
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        .ocean-glow {
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
-        .cyber-glow {
-            text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        .mint-glow {
+            text-shadow: 0 0 20px rgba(45, 212, 191, 0.5);
         }
 
         .glass-panel {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(16px);
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+        }
+
+        body.midnight .glass-panel {
+            background: rgba(20, 20, 20, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 40px -15px rgba(0, 0, 0, 0.5);
         }
 
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: #020617;
+            background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, #d4af37, #b45309);
+            background: #10b981;
             border-radius: 10px;
         }
-
         body.midnight ::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, #38bdf8, #0369a1);
+            background: #2dd4bf;
         }
 
         @keyframes spotlight {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
         }
 
         .spotlight {
