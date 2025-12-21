@@ -312,8 +312,8 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-24 px-4 pt-6 md:pt-10 max-w-5xl mx-auto selection:bg-amber-500/30">
-      {/* PERSISTENT STREAK COUNTER - MOVED TO TOP RIGHT, ADJUSTED FOR MOBILE */}
-      <div className="fixed top-4 right-4 md:top-6 md:right-8 z-[110] pointer-events-none">
+      {/* PERSISTENT STREAK COUNTER - ALWAYS VISIBLE WITH HIGHEST Z-INDEX */}
+      <div className="fixed top-4 right-4 md:top-6 md:right-8 z-[500] pointer-events-none">
         <div 
           key={streak} 
           className={`flex items-center gap-2 md:gap-3 bg-slate-900/95 backdrop-blur-3xl border-2 px-3 py-1.5 md:px-6 md:py-2.5 rounded-2xl shadow-[0_0_30px_rgba(245,158,11,0.2)] transition-all duration-500 ${
@@ -346,7 +346,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Background Music Toggle - Adjusted for Mobile */}
+      {/* Background Music Toggle */}
       <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[110]">
         <button 
           onClick={() => setIsMuted(!isMuted)}
@@ -361,7 +361,7 @@ const App: React.FC = () => {
         </button>
       </div>
 
-      {/* Header - Balanced padding for streak */}
+      {/* Header */}
       <header className="mb-8 md:mb-12 text-center group mt-10 md:mt-4">
         <div className="relative inline-flex flex-col items-center">
           <div className="flex justify-center items-center gap-2 md:gap-4 mb-2 relative">
@@ -460,18 +460,17 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Detail View Overlay - IMPROVED MOBILE LAYOUT */}
+      {/* Detail View Overlay */}
       {selectedWord && !isShuffling && (
         <div className="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl flex items-center justify-center p-3 md:p-6 animate-in fade-in duration-300 overflow-y-auto">
           <div className="w-full max-w-xl bg-slate-900 border border-amber-500/20 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col my-auto max-h-[92vh] relative scale-95 sm:scale-100">
             
-            <button onClick={resetGame} className="absolute right-4 top-4 md:right-8 md:top-8 text-slate-500 hover:text-white p-3 transition-colors z-[160] bg-slate-950/40 rounded-full border border-white/5">
+            {/* Shifting close button to top-left on mobile to prevent streak overlap */}
+            <button onClick={resetGame} className="absolute left-4 top-4 md:left-auto md:right-8 md:top-8 text-slate-500 hover:text-white p-3 transition-colors z-[160] bg-slate-950/40 rounded-full border border-white/5">
               <X size={24} />
             </button>
 
-            {/* Content Container */}
             <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth flex flex-col">
-              
               <div className={`p-6 md:p-10 text-center relative border-b border-white/5 transition-all ${isTimerActive || isGameOver || isShowingAnswers ? 'pt-16 pb-6' : 'py-12 md:py-16'}`}>
                 <div className={`flex flex-col items-center justify-center gap-4 md:gap-6`}>
                   <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 px-2">
@@ -628,7 +627,7 @@ const App: React.FC = () => {
       )}
 
       {showRules && (
-        <div className="fixed inset-0 z-[200] bg-black/98 flex items-center justify-center p-4 backdrop-blur-md">
+        <div className="fixed inset-0 z-[600] bg-black/98 flex items-center justify-center p-4 backdrop-blur-md">
           <div className="w-full max-w-md bg-slate-900 border border-amber-500/20 rounded-[2rem] p-8 relative shadow-2xl overflow-y-auto max-h-[90vh]">
             <button onClick={() => setShowRules(false)} className="absolute right-6 top-6 text-slate-600 hover:text-white p-2 transition-colors"><X size={24} /></button>
             <h2 className="heading-font text-3xl font-black text-amber-500 mb-8 tracking-widest uppercase">RULES</h2>
