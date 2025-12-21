@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,33 +11,57 @@
             --gold: #d4af37;
             --rose: #b76e79;
             --navy: #050810;
+            --midnight: #020617;
+            --sky: #38bdf8;
+            --spotlight-color: rgba(212, 175, 55, 0.08);
         }
+        
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--navy);
             color: #f1f5f9;
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% -20%, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+            transition: background-color 0.5s ease;
         }
+
+        body.midnight {
+            background-color: var(--midnight);
+            --spotlight-color: rgba(56, 189, 248, 0.08);
+        }
+
         .hindi-font {
             font-family: 'Hind', sans-serif;
         }
         .heading-font {
             font-family: 'Cinzel', serif;
         }
+        
         .gold-gradient-text {
             background: linear-gradient(180deg, #fde68a 0%, #d4af37 50%, #b45309 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        .cyber-gradient-text {
+            background: linear-gradient(180deg, #bae6fd 0%, #38bdf8 50%, #0369a1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         .gold-glow {
             text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
+
+        .cyber-glow {
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
         .glass-panel {
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
+
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
@@ -50,10 +73,16 @@
             background: linear-gradient(to bottom, #d4af37, #b45309);
             border-radius: 10px;
         }
+
+        body.midnight ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #38bdf8, #0369a1);
+        }
+
         @keyframes spotlight {
             0%, 100% { opacity: 0.4; transform: scale(1); }
             50% { opacity: 0.7; transform: scale(1.1); }
         }
+
         .spotlight {
             position: fixed;
             top: -30%;
@@ -61,7 +90,7 @@
             transform: translateX(-50%);
             width: 150vw;
             height: 120vh;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, var(--spotlight-color) 0%, transparent 70%);
             pointer-events: none;
             z-index: -1;
             animation: spotlight 10s ease-in-out infinite;
@@ -81,7 +110,7 @@
 }
 </script>
 </head>
-<body>
+<body class="luxury">
     <div class="spotlight"></div>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
