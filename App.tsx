@@ -136,7 +136,7 @@ const App: React.FC = () => {
       }
 
       return matchSearch && matchCategory && matchLetter;
-    });
+    }).sort((a, b) => a.word.localeCompare(b.word));
   }, [filters, othersCategories]);
 
   const handlePickRandom = useCallback(() => {
