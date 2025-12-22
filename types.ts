@@ -26,4 +26,5 @@ export interface BollywoodWord {
 export type FilterState = {
   category: Category | 'All' | 'All Others';
   search: string;
+  startingLetter: string | 'All';
 };

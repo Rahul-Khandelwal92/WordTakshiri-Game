@@ -1,5 +1,6 @@
+
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, HelpCircle, Home, Mic2, Star, RotateCcw, Flame, Moon, Sun, Settings, Clock } from 'lucide-react';
+import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, HelpCircle, Home, Mic2, Star, RotateCcw, Flame, Moon, Sun, Settings, Clock, ChevronRight } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { BOLLYWOOD_WORDS } from './constants';
 import { BollywoodWord, Category, FilterState } from './types';
@@ -57,6 +58,7 @@ const App: React.FC = () => {
   const [filters, setFilters] = useState<FilterState>({
     category: 'All',
     search: '',
+    startingLetter: 'All',
   });
 
   const [selectedWord, setSelectedWord] = useState<BollywoodWord | null>(null);
@@ -98,14 +100,22 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const { visibleCategories, othersCategories } = useMemo(() => {
+  const { visibleCategories, othersCategories, availableLetters } = useMemo(() => {
     const counts: Record<string, number> = {};
+    const lettersSet = new Set<string>();
+    
     BOLLYWOOD_WORDS.forEach(w => {
       counts[w.category] = (counts[w.category] || 0) + 1;
+      if (w.word && w.word.length > 0) {
+        lettersSet.add(w.word[0].toUpperCase());
+      }
     });
+    
     const visible = Object.values(Category).filter(cat => counts[cat] >= 5);
     const others = Object.values(Category).filter(cat => counts[cat] > 0 && counts[cat] < 5);
-    return { visibleCategories: visible, othersCategories: others };
+    const sortedLetters = Array.from(lettersSet).sort();
+    
+    return { visibleCategories: visible, othersCategories: others, availableLetters: sortedLetters };
   }, []);
 
   const filteredWords = useMemo(() => {
@@ -120,7 +130,12 @@ const App: React.FC = () => {
         matchCategory = item.category === filters.category;
       }
 
-      return matchSearch && matchCategory;
+      let matchLetter = true;
+      if (filters.startingLetter !== 'All') {
+        matchLetter = item.word.toUpperCase().startsWith(filters.startingLetter);
+      }
+
+      return matchSearch && matchCategory && matchLetter;
     });
   }, [filters, othersCategories]);
 
@@ -299,31 +314,67 @@ const App: React.FC = () => {
         {/* Filters & Search */}
         {!selectedWord && !isShuffling && (
           <section className="animate-in fade-in duration-700">
-            <div className={`mb-6 md:mb-8 flex flex-col md:flex-row gap-4 items-center glass-panel p-3 md:p-4 rounded-2xl md:rounded-3xl`}>
+            <div className={`mb-6 md:mb-8 flex flex-col gap-4 glass-panel p-3 md:p-5 rounded-3xl`}>
+              {/* Search Bar */}
               <div className="relative flex-1 w-full">
                 <Search className={`absolute left-4 top-1/2 -translate-y-1/2 ${isLuxury ? 'text-emerald-600/40' : 'text-teal-400/40'}`} size={16} />
                 <input 
                   type="text" 
-                  placeholder="Search lyrics..."
+                  placeholder="Search lyrics or meanings..."
                   value={filters.search}
                   onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                  className={`w-full rounded-xl py-3 md:py-4 pl-10 pr-4 focus:outline-none transition-all placeholder:text-slate-400 text-sm md:text-base border ${isLuxury ? 'bg-white border-slate-200 focus:border-emerald-500/40 text-slate-900' : 'bg-black/20 border-white/10 focus:border-teal-400/40 text-white'}`}
+                  className={`w-full rounded-2xl py-3 md:py-4 pl-10 pr-4 focus:outline-none transition-all placeholder:text-slate-400 text-sm md:text-base border ${isLuxury ? 'bg-white border-slate-100 focus:border-emerald-500/40 text-slate-900 shadow-sm' : 'bg-black/20 border-white/5 focus:border-teal-400/40 text-white'}`}
                 />
               </div>
-              <div className="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto no-scrollbar scroll-smooth">
-                {['All', ...visibleCategories, 'All Others'].map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setFilters(prev => ({ ...prev, category: cat as any }))}
-                    className={`px-4 md:px-5 py-2 md:py-3 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${
-                      filters.category === cat 
-                        ? `${isLuxury ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-teal-500 border-teal-400 text-white'} shadow-md` 
-                        : `${isLuxury ? 'bg-white border-slate-200 text-slate-500 hover:text-slate-800' : 'bg-white/5 border-white/10 text-white/50 hover:text-white'}`
-                    }`}
+
+              {/* Alphabet Scroller */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-1">
+                  <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-widest ${isLuxury ? 'text-slate-400' : 'text-white/30'}`}>Alphabetical</span>
+                  <button 
+                    onClick={() => setFilters(prev => ({ ...prev, startingLetter: 'All' }))}
+                    className={`text-[8px] md:text-[9px] font-black uppercase tracking-widest hover:underline ${filters.startingLetter === 'All' ? (isLuxury ? 'text-emerald-600' : 'text-teal-400') : 'text-slate-400'}`}
                   >
-                    {cat}
+                    Clear
                   </button>
-                ))}
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
+                  {availableLetters.map((letter) => (
+                    <button
+                      key={letter}
+                      onClick={() => setFilters(prev => ({ ...prev, startingLetter: prev.startingLetter === letter ? 'All' : letter }))}
+                      className={`flex-shrink-0 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl md:rounded-2xl text-sm md:text-lg font-black transition-all border ${
+                        filters.startingLetter === letter 
+                          ? `${isLuxury ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-teal-500 border-teal-400 text-white'} shadow-lg scale-110 z-10` 
+                          : `${isLuxury ? 'bg-white border-slate-100 text-slate-600 hover:border-emerald-200' : 'bg-white/5 border-white/10 text-white/50 hover:border-teal-400/30'}`
+                      }`}
+                    >
+                      {letter}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Category Scroller */}
+              <div className="space-y-2">
+                <div className="px-1">
+                  <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-widest ${isLuxury ? 'text-slate-400' : 'text-white/30'}`}>Categories</span>
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1 w-full no-scrollbar scroll-smooth">
+                  {['All', ...visibleCategories, 'All Others'].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setFilters(prev => ({ ...prev, category: cat as any }))}
+                      className={`px-4 md:px-5 py-2 md:py-3 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${
+                        filters.category === cat 
+                          ? `${isLuxury ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-teal-500 border-teal-400 text-white'} shadow-md` 
+                          : `${isLuxury ? 'bg-white border-slate-100 text-slate-500 hover:text-slate-800' : 'bg-white/5 border-white/10 text-white/50 hover:text-white'}`
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -331,6 +382,19 @@ const App: React.FC = () => {
               {filteredWords.map((item) => (
                 <WordCard key={item.id} item={item} onClick={handleWordClick} theme={theme} />
               ))}
+              {filteredWords.length === 0 && (
+                <div className="col-span-full py-16 text-center animate-in fade-in zoom-in-95">
+                  <Search size={48} className={`mx-auto mb-4 opacity-20 ${isLuxury ? 'text-slate-900' : 'text-white'}`} />
+                  <p className={`text-xl font-black heading-font ${isLuxury ? 'text-slate-400' : 'text-white/30'}`}>No Melodies Found</p>
+                  <p className="text-xs text-slate-500 mt-2">Try clearing some filters</p>
+                  <button 
+                    onClick={() => setFilters({ category: 'All', search: '', startingLetter: 'All' })}
+                    className={`mt-6 px-6 py-2 rounded-full border font-black text-[10px] uppercase tracking-[0.2em] ${isLuxury ? 'border-emerald-500 text-emerald-600' : 'border-teal-400 text-teal-400'}`}
+                  >
+                    Reset All
+                  </button>
+                </div>
+              )}
             </div>
           </section>
         )}
