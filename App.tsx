@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, HelpCircle, Home, Mic2, Star, RotateCcw, Flame, Moon, Sun, Settings, Clock, ChevronRight } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+import { Search, Shuffle, RefreshCw, X, Info, Trophy, Music, Play, Timer as TimerIcon, Eye, CheckCircle, Sparkles, HelpCircle, Home, Mic2, Star, RotateCcw, Flame, Moon, Sun, Settings, Clock, ChevronRight, Volume2 } from 'lucide-react';
+import { GoogleGenAI, Modality } from "@google/genai";
 import { BOLLYWOOD_WORDS } from './constants';
 import { BollywoodWord, Category, FilterState } from './types';
 import { WordCard } from './components/WordCard';
@@ -77,6 +77,40 @@ const App: React.FC = () => {
   const [isShuffling, setIsShuffling] = useState(false);
   const [shufflingWord, setShufflingWord] = useState<string>('');
   const [shuffleBlur, setShuffleBlur] = useState(0);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const speakWord = async () => {
+    if (!selectedWord || isSpeaking) return;
+    
+    setIsSpeaking(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash-preview-tts",
+        contents: [{ parts: [{ text: `Say clearly in Hindi: ${selectedWord.word}` }] }],
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: "Kore" }
+            }
+          }
+        }
+      });
+      
+      const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if (base64Audio) {
+        const audio = new Audio(`data:audio/mp3;base64,${base64Audio}`);
+        audio.onended = () => setIsSpeaking(false);
+        await audio.play();
+      } else {
+        setIsSpeaking(false);
+      }
+    } catch (error) {
+      console.error("TTS Error:", error);
+      setIsSpeaking(false);
+    }
+  };
 
   // Apply theme class to body
   useEffect(() => {
@@ -450,6 +484,14 @@ const App: React.FC = () => {
                         <p className={`text-sm sm:text-base md:text-xl font-medium tracking-tight italic px-4 ${isLuxury ? 'text-slate-500' : 'text-white/60'}`}>
                           "{selectedWord.englishMeaning}"
                         </p>
+                        <button 
+                          onClick={speakWord}
+                          disabled={isSpeaking}
+                          className={`mx-auto flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${isLuxury ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-teal-500/20 text-teal-300 hover:bg-teal-500/30'}`}
+                        >
+                          <Volume2 size={16} className={isSpeaking ? 'animate-pulse' : ''} />
+                          {isSpeaking ? 'Speaking...' : 'Hear Pronunciation'}
+                        </button>
                         <div className={`rounded-2xl p-4 md:p-6 shadow-sm max-w-[280px] sm:max-w-xs mx-auto border ${isLuxury ? 'bg-emerald-50 border-emerald-100' : 'bg-teal-500/10 border-teal-500/20'}`}>
                            <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${isLuxury ? 'text-emerald-600' : 'text-teal-400'}`}>Target</p>
                            <p className={`text-xs md:text-sm font-bold ${isLuxury ? 'text-slate-800' : 'text-white'}`}>Sing a song with <span className={isLuxury ? 'text-emerald-600' : 'text-teal-400'}>"{selectedWord.word}"</span></p>

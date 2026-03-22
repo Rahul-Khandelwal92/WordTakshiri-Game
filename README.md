@@ -1,20 +1,49 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Swar-Takshari
 
-# Run and deploy your AI Studio app
+The Definitive Bollywood Singing Arena. A React-based Antakshari-style game using Bollywood words.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/8f7b5a41-3954-43b3-8d57-481e336c098a
+- **Word Selection**: Pick random words or filter by category and starting letter.
+- **Timer**: Challenge yourself with a timer for singing.
+- **Hints & Lyrics**: Reveal song hints and lyrics if you get stuck.
+- **Audio Feedback**: Enjoy game sounds and confetti for a fun experience.
+- **Theming**: Switch between 'Luxury' and 'Midnight' themes.
+- **AI Pronunciation**: Hear the correct pronunciation of the Bollywood words using Google's Gemini TTS model.
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- React 19
+- Vite
+- Tailwind CSS
+- Lucide React (Icons)
+- Google GenAI SDK (`@google/genai`)
 
+## Getting Started
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up your environment variables. You will need a Gemini API key.
+   Create a `.env` file and add:
+   ```env
+   GEMINI_API_KEY=your_api_key_here
+   ```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## How to Play
+
+1. Select a Bollywood keyword to start.
+2. You have a set duration (e.g., 15 seconds) to sing a song containing that word.
+3. If you succeed, click "NAILED IT" to increase your streak.
+4. If you don't know a song, click "NO IDEA" to reveal the lyrics and reset your streak.
+5. Keep singing without help to build your high score!
+
+## License
+
+MIT
