@@ -1,4 +1,4 @@
-# Swar-Takshari
+# Workd-Takshiri Game
 
 The Definitive Bollywood Singing Arena. A React-based Antakshari-style game using Bollywood words.
 
