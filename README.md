@@ -16,7 +16,17 @@ Traditional Antakshari is a beloved party game, but it relies entirely on memory
 - **🔥 Streak Tracking**: Gamify your experience! Keep singing without help to build your high score and maintain your winning streak.
 - **🎵 Rich Audio Feedback**: Enjoy custom-synthesized game sounds, ticking timers, and victory/defeat tunes built directly with the Web Audio API.
 - **🎨 Immersive Theming**: Switch between a bright, elegant 'Luminous' (Luxury) theme and a sleek 'Midnight' dark mode.
-- - **🧠 AI-Powered Pronunciation**: Hear the correct Hindi pronunciation of Bollywood words instantly, powered by Google's Gemini 2.5 Flash TTS model.
+- **🧠 AI-Powered Pronunciation**: Hear the correct Hindi pronunciation of Bollywood words instantly, powered by Google's Gemini 2.5 Flash TTS model.
+
+## Screenshots
+
+| Home Screen | Filter by Theme & Letters | Word Prompt |
+|-------------|--------------------------|-------------|
+| <img src="screenshots/Word Takshiri.png" width="280"/> | <img src="screenshots/Filter based on Theme & Letters.png" width="280"/> | <img src="screenshots/Word Prompt.png" width="280"/> |
+
+| Timer | Song Hints | Scoring | Game Settings |
+|-------|-----------|---------|---------------|
+| <img src="screenshots/Timer.png" width="200"/> | <img src="screenshots/Song Hints.png" width="200"/> | <img src="screenshots/Scoring.png" width="200"/> | <img src="screenshots/Game Settings.png" width="200"/> |
 
 ## Tech Stack
 
