@@ -22,11 +22,11 @@ Traditional Antakshari is a beloved party game, but it relies entirely on memory
 
 | Home Screen | Filter by Theme & Letters | Word Prompt |
 |-------------|--------------------------|-------------|
-| <img src="screenshots/Word Takshiri.png" width="280"/> | <img src="screenshots/Filter based on Theme & Letters.png" width="280"/> | <img src="screenshots/Word Prompt.png" width="280"/> |
+| <img src="screenshots/Word-Takshiri.png" width="280"/> | <img src="screenshots/Filter-based-on-Theme-&-Letters.png" width="280"/> | <img src="screenshots/Word-Prompt.png" width="280"/> |
 
 | Timer | Song Hints | Scoring | Game Settings |
 |-------|-----------|---------|---------------|
-| <img src="screenshots/Timer.png" width="200"/> | <img src="screenshots/Song Hints.png" width="200"/> | <img src="screenshots/Scoring.png" width="200"/> | <img src="screenshots/Game Settings.png" width="200"/> |
+| <img src="screenshots/Timer.png" width="200"/> | <img src="screenshots/Song-Hints.png" width="200"/> | <img src="screenshots/Scoring.png" width="200"/> | <img src="screenshots/Game-Settings.png" width="200"/> |
 
 ## Tech Stack
 
