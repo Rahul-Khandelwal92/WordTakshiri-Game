@@ -1,4 +1,4 @@
-# Swar-Takshari 🎤✨
+# Word-Takshari 🎤✨
 
 The Definitive Bollywood Singing Arena. A React-based Antakshari-style game using Bollywood words.
 
