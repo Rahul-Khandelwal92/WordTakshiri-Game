@@ -70,10 +70,10 @@ MIT
 
 | Decision | What I chose | What I gave up | Why |
 |----------|-------------|----------------|-----|
-| **Words as prompts over letters (Akshar)** | Bollywood word as the challenge unit | Traditional letter-based Antakshari | Words are richer prompts — they carry meaning, category, and emotion, making hints and AI assistance far more useful |
-| **AI pronunciation (TTS) over phonetic text** | Gemini TTS for Hindi audio | Showing romanized pronunciation | Non-native speakers need to *hear* the word, not decode a phonetic spelling — audio removes the barrier entirely |
+| **Words as prompts over letters (Akshar)** | Bollywood word as the challenge unit | Traditional letter-based Antakshari | Words are richer prompts: they carry meaning, category, and emotion, making hints and AI assistance far more useful |
+| **AI pronunciation (TTS) over phonetic text** | Gemini TTS for Hindi audio | Showing romanized pronunciation | Non-native speakers need to *hear* the word, not decode a phonetic spelling; audio removes the barrier entirely |
 | **Adjustable timer over fixed timer** | 5s / 10s / 15s / 30s options | Simpler single-speed game | Different groups have different skill levels; flexibility makes the game inclusive for Bollywood novices and experts alike |
-| **Hint + lyrics reveal over pure memory** | Song hints and YouTube links on demand | Competitive purity | The goal is fun and discovery, not elimination — giving hints keeps quieter players engaged rather than sidelined |
+| **Hint + lyrics reveal over pure memory** | Song hints and YouTube links on demand | Competitive purity | The goal is fun and discovery, not elimination. Giving hints keeps quieter players engaged rather than sidelined |
 | **Streak system over point scoring** | Consecutive success tracking | Cumulative score leaderboard | Streaks create moment-to-moment tension and reward consistency; scoring felt less exciting for a party game format |
 
 ---
@@ -81,5 +81,5 @@ MIT
 ## 💡 What I Learned
 
 - **Inclusivity is a product feature.** Designing for someone who doesn't know many Bollywood songs (through hints, TTS, lyrics) made the game more fun for everyone, not just beginners.
-- **Audio feedback transforms a web app into a game.** The ticking timer and victory sounds — built with the Web Audio API — created emotional engagement that UI alone couldn't.
+- **Audio feedback transforms a web app into a game.** The ticking timer and victory sounds (built with the Web Audio API) created emotional engagement that UI alone couldn't.
 - **Party games need a fast "reset" loop.** Every design decision was evaluated against one question: how quickly can a new round start?
